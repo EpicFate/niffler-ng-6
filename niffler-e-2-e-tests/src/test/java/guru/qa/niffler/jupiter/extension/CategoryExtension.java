@@ -1,4 +1,4 @@
-package guru.qa.niffler.jupiter.Category;
+package guru.qa.niffler.jupiter.extension;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
@@ -35,13 +35,13 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return extensionContext
-                .getStore(CategoryExtension.NAMESPACE)
+                .getStore(NAMESPACE)
                 .get(extensionContext.getUniqueId(), CategoryJson.class);
     }
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        CategoryJson categoryJson = context.getStore(CategoryExtension.NAMESPACE)
+        CategoryJson categoryJson = context.getStore(NAMESPACE)
                 .get(context.getUniqueId(), CategoryJson.class);
         if (!categoryJson.archived()) {
             new SpendApiClient().updateCategory(
