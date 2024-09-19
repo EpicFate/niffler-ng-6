@@ -9,6 +9,7 @@ services:
     volumes:
       - ./postgres/postgresql.conf:/etc/postgresql.conf
       - ./postgres/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres", "-d", "postgres" ]
       interval: 3s
@@ -141,3 +142,7 @@ services:
 networks:
   niffler-network:
     driver: bridge
+
+volumes:
+  pgdata:
+    external: true
