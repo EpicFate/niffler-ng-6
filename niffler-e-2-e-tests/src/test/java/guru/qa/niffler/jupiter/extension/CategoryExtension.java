@@ -1,11 +1,14 @@
 package guru.qa.niffler.jupiter.extension;
 
-import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.Spending;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
+
+import static guru.qa.niffler.utils.RandomDataUtils.randomFunnyName;
 
 public class CategoryExtension implements BeforeEachCallback, ParameterResolver, AfterTestExecutionCallback {
 
@@ -14,14 +17,17 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Category.class)
-                .ifPresent(anno -> {
-                    CategoryJson created = spendApiClient.addCategory(jsonForCreate(anno));
-                    if (anno.archived()) {
-                        created = spendApiClient.updateCategory(jsonForUpdate(created));
+        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
+                .ifPresent(userAnno -> {
+                    if (userAnno.categories().length > 0) {
+                        Category anno = userAnno.categories()[0];
+                        CategoryJson created = spendApiClient.addCategory(jsonForCreate(userAnno.username()));
+                        if (anno.archived()) {
+                            created = spendApiClient.updateCategory(jsonForUpdate(created));
+                        }
+                        context.getStore(NAMESPACE)
+                                .put(context.getUniqueId(), created);
                     }
-                    context.getStore(NAMESPACE)
-                            .put(context.getUniqueId(), created);
                 });
     }
     @Override
@@ -43,23 +49,25 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     public void afterTestExecution(ExtensionContext context) throws Exception {
         CategoryJson categoryJson = context.getStore(NAMESPACE)
                 .get(context.getUniqueId(), CategoryJson.class);
-        if (!categoryJson.archived()) {
-            new SpendApiClient().updateCategory(
-                    new CategoryJson(
-                            categoryJson.id(),
-                            categoryJson.name(),
-                            categoryJson.username(),
-                            true
-                    )
-            );
+        if (categoryJson != null) {
+            if (!categoryJson.archived()) {
+                new SpendApiClient().updateCategory(
+                        new CategoryJson(
+                                categoryJson.id(),
+                                categoryJson.name(),
+                                categoryJson.username(),
+                                true
+                        )
+                );
+            }
         }
     }
 
-    private CategoryJson jsonForCreate(Category anno) {
+    private CategoryJson jsonForCreate(String username) {
         return new CategoryJson(
                 null,
-                new Faker().funnyName().name(),
-                anno.username(),
+                randomFunnyName(),
+                username,
                 false
         );
     }
