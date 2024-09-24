@@ -11,44 +11,41 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 @WebTest
 public class RegistrationTest {
 
-
+  private static final Config CFG = Config.getInstance();
 
   @Test
-  public void checkSucceedRegister() {
-    final String userName = randomUsername();
-    final String password = "123";
-
-    Selenide.open(Config.getInstance().frontUrl(), LoginPage.class)
-            .clickCreateNewAccount()
-            .createNewUser(userName, password)
-            .checkParagraphSuccessForm();
+  void shouldRegisterNewUser() {
+    String newUsername = randomUsername();
+    String password = "12345";
+    Selenide.open(CFG.frontUrl(), LoginPage.class)
+        .doRegister()
+        .fillRegisterPage(newUsername, password, password)
+        .successSubmit()
+        .successLogin(newUsername, password)
+        .checkThatPageLoaded();
   }
 
   @Test
-  public void wrongUsername() {
-    final String expectedMassagePatten = "Username `%s` already exists";
-    final String username = "epic";
-    final String password = "123";
+  void shouldNotRegisterUserWithExistingUsername() {
+    String existingUsername = "duck";
+    String password = "12345";
 
-    Selenide.open(Config.getInstance().frontUrl(), LoginPage.class)
-            .clickCreateNewAccount()
-            .createNewUser(username, password)
-            .checkErrorMassage(expectedMassagePatten.formatted(username));
+    LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
+    loginPage.doRegister()
+        .fillRegisterPage(existingUsername, password, password)
+        .submit();
+    loginPage.checkError("Username `" + existingUsername + "` already exists");
   }
 
   @Test
-  public void wrongPassword() {
-    final String expectedMassage = "Passwords should be equal";
-    final String username = "epic";
-    final String password = "123";
-    final String passwordSubmit = "321";
+  void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
+    String newUsername = randomUsername();
+    String password = "12345";
 
-    Selenide.open(Config.getInstance().frontUrl(), LoginPage.class)
-            .clickCreateNewAccount()
-            .setUsernameInput(username)
-            .setPasswordInput(password)
-            .setPasswordSubmit(passwordSubmit)
-            .clickSubmitButton()
-            .checkErrorMassage(expectedMassage);
+    LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
+    loginPage.doRegister()
+        .fillRegisterPage(newUsername, password, "bad password submit")
+        .submit();
+    loginPage.checkError("Passwords should be equal");
   }
 }

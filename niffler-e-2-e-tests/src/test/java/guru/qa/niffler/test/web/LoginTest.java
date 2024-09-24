@@ -6,18 +6,24 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
+
 @WebTest
 public class LoginTest {
 
-    @Test
-    void mainPageShouldBeDisplayedAfterSuccessLogin() {
-        Selenide.open(Config.getInstance().frontUrl(), LoginPage.class)
-                .login("epic", "123")
-                .checkSpendingTitleIsVisible();
-    }
+  private static final Config CFG = Config.getInstance();
 
-//    @Test
-//    void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-//
-//    }
+  @Test
+  void mainPageShouldBeDisplayedAfterSuccessLogin() {
+    Selenide.open(CFG.frontUrl(), LoginPage.class)
+        .successLogin("duck", "12345")
+        .checkThatPageLoaded();
+  }
+
+  @Test
+  void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
+    LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
+    loginPage.login(randomUsername(), "BAD");
+    loginPage.checkError("Bad credentials");
+  }
 }
