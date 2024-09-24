@@ -45,7 +45,7 @@ public class SpendApiClient {
         executeSpendRemove(spendApi -> spendApi.deleteSpends(username, ids));
     }
 
-    public CategoryJson addCategory(CategoryJson category) {
+    public CategoryJson createCategory(CategoryJson category) {
         return executeCategory(spendApi -> spendApi.addCategory(category));
     }
 

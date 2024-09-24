@@ -16,12 +16,21 @@ public class MainPage {
     private final SelenideElement profileButton = $("a[href='/profile']");
     private final SelenideElement profile = $x("//h2[text()='Profile']");
 
-    public ProfilePage openProfile() {
-        menuButton.click();
-        menu.shouldBe(visible);
-        profileButton.click();
-        profile.shouldBe(visible);
-        return new ProfilePage();
+    private final SelenideElement header = $("#root header");
+    private final SelenideElement headerMenu = $("ul[role='menu']");
+    private final SelenideElement statComponent = $("#stat");
+    private final SelenideElement spendingTable = $("#spendings");
+
+    public FriendsPage friendsPage() {
+        header.$("button").click();
+        headerMenu.$$("li").find(text("Friends")).click();
+        return new FriendsPage();
+    }
+
+    public PeoplePage allPeoplesPage() {
+        header.$("button").click();
+        headerMenu.$$("li").find(text("All People")).click();
+        return new PeoplePage();
     }
 
     public EditSpendingPage editSpending(String spendingDescription) {
@@ -29,9 +38,22 @@ public class MainPage {
         return new EditSpendingPage();
     }
 
-    public MainPage checkThatTableContainsSpending(String spendingDescription) {
+    public void checkThatTableContainsSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription)).should(visible);
-        return new MainPage();
+    }
+
+    public MainPage checkThatPageLoaded() {
+        statComponent.should(visible).shouldHave(text("Statistics"));
+        spendingTable.should(visible).shouldHave(text("History of Spendings"));
+        return this;
+    }
+
+    public ProfilePage openProfile() {
+        menuButton.click();
+        menu.shouldBe(visible);
+        profileButton.click();
+        profile.shouldBe(visible);
+        return new ProfilePage();
     }
 
     public MainPage checkSpendingTitleIsVisible() {

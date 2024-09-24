@@ -7,8 +7,7 @@ import guru.qa.niffler.common.CategoryButtons;
 import guru.qa.niffler.common.ModalButtons;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static guru.qa.niffler.common.CategoryButtons.ARCHIVE_CATEGORY;
 import static guru.qa.niffler.common.CategoryButtons.UNARCHIVE_CATEGORY;
@@ -29,6 +28,8 @@ public class ProfilePage {
             "//*[@aria-label]//ancestor::div[contains(@class, 'MuiGrid-root MuiGrid-item')]");
     private final SelenideElement dialogModal = $("[role=dialog]");
     private final SelenideElement alertModal = $("[role='alert']");
+    private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
+    private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
 
     private By categoryButton(CategoryButtons button) {
         return By.cssSelector("button[aria-label='%s']".formatted(button.getAriaLabel()));
@@ -81,6 +82,17 @@ public class ProfilePage {
                 .shouldBe(visible)
                 .shouldHave(exactText(expectedMassage));
         return new ProfilePage();
+    }
+
+    public ProfilePage checkArchivedCategoryExists(String category) {
+        activateShowArchivedCheckbox();
+        bubblesArchived.find(text(category)).shouldBe(visible);
+        return this;
+    }
+
+    public ProfilePage checkCategoryExists(String category) {
+        bubbles.find(text(category)).shouldBe(visible);
+        return this;
     }
 
 

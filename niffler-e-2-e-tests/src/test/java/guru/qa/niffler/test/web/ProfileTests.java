@@ -22,7 +22,7 @@ public class ProfileTests {
         String resultAlertMassagePattern = "Category %s is unarchived";
 
         Selenide.open(Config.getInstance().frontUrl(), LoginPage.class)
-                .login("epic", "123")
+                .successLogin("epic", "123")
                 .openProfile()
                 .activateShowArchivedCheckbox()
                 .unarchivedCategoryAndAcceptModal(category.name())
@@ -42,7 +42,7 @@ public class ProfileTests {
         String resultAlertMassagePattern = "Category %s is archived";
 
         Selenide.open(Config.getInstance().frontUrl(), LoginPage.class)
-                .login("epic", "123")
+                .successLogin("epic", "123")
                 .openProfile()
                 .activateShowArchivedCheckbox()
                 .archiveCategoryAndAcceptModal(category.name())
