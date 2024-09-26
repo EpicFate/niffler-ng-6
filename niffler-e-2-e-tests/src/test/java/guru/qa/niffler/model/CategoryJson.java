@@ -3,6 +3,8 @@ package guru.qa.niffler.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public record CategoryJson(
@@ -23,4 +25,12 @@ public record CategoryJson(
         entity.isArchived()
     );
   }
+
+    public static List<CategoryJson> fromEntities(List<CategoryEntity> entities) {
+        ArrayList<CategoryJson> list = new ArrayList<>();
+        for (CategoryEntity entity : entities) {
+            list.add(fromEntity(entity));
+        }
+        return list;
+    }
 }

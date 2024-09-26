@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public record SpendJson(
@@ -41,5 +43,13 @@ public record SpendJson(
         entity.getDescription(),
         username
     );
+  }
+
+  public static List<SpendJson> fromEntities(List<SpendEntity> entities) {
+      ArrayList<SpendJson> list = new ArrayList<>();
+      for (SpendEntity entity : entities) {
+          list.add(fromEntity(entity));
+      }
+      return list;
   }
 }
