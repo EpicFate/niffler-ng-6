@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface AuthUserDao {
 
-    AuthUserEntity createUser(AuthUserEntity user);
+    AuthUserEntity create(AuthUserEntity user);
 
     Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser);
 

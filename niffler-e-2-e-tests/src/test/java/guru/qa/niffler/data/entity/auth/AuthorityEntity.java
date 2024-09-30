@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.entity.auth;
 
-import guru.qa.niffler.model.auth.Authority;
 import lombok.Getter;
 import lombok.Setter;
 
