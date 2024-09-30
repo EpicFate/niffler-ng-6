@@ -33,4 +33,5 @@ public class UserEntity implements Serializable {
         user.setPhotoSmall(json.photoSmall() != null ? json.photoSmall().getBytes(StandardCharsets.UTF_8) : null);
         return user;
     }
+
 }
