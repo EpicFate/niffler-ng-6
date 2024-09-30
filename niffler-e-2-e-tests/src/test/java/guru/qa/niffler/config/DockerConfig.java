@@ -30,7 +30,7 @@ enum DockerConfig implements Config {
 
     @Override
     public String authJdbcUrl() {
-        return "";
+        return "jdbc:postgresql://127.0.0.1:5432/niffler-auth";
     }
 
     @Override

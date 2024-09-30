@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userData.UserEntity;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public record UserJson(
@@ -24,9 +22,11 @@ public record UserJson(
         @JsonProperty("photo")
         String photo,
         @JsonProperty("photoSmall")
-        String photoSmall) {
+        String photoSmall,
+        @JsonProperty("friendState")
+        FriendState friendState) {
 
-    public static UserJson fromEntity(UserEntity entity) {
+    public static UserJson fromEntity(UserEntity entity, FriendState friendState) {
         return new UserJson(
                 entity.getId(),
                 entity.getUsername(),
@@ -35,15 +35,8 @@ public record UserJson(
                 entity.getFullname(),
                 entity.getCurrency(),
                 entity.getPhoto() != null && entity.getPhoto().length > 0 ? new String(entity.getPhoto(), StandardCharsets.UTF_8) : null,
-                entity.getPhotoSmall() != null && entity.getPhotoSmall().length > 0 ? new String(entity.getPhotoSmall(), StandardCharsets.UTF_8) : null
+                entity.getPhotoSmall() != null && entity.getPhotoSmall().length > 0 ? new String(entity.getPhotoSmall(), StandardCharsets.UTF_8) : null,
+                friendState
         );
-    }
-
-    public static List<UserJson> fromEntities(List<UserEntity> entities) {
-        ArrayList<UserJson> list = new ArrayList<>();
-        for (UserEntity entity : entities) {
-            list.add(fromEntity(entity));
-        }
-        return list;
     }
 }

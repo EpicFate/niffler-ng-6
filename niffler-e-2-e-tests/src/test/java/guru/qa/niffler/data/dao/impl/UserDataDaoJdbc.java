@@ -1,7 +1,6 @@
 package guru.qa.niffler.data.dao.impl;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.UserDataDao;
 import guru.qa.niffler.data.entity.userData.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
@@ -10,13 +9,18 @@ import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UsetDataDAOJdbc implements UserDataDao {
+public class UserDataDaoJdbc implements UserDataDao {
 
     private static final Config CFG = Config.getInstance();
 
+    private final Connection connection;
+
+    public UserDataDaoJdbc(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
     public UserEntity createUser(UserEntity user) {
-        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
                     """
                             INSERT INTO "user" (username, currency, firstname, surname, photo, photo_small, full_name)
@@ -44,16 +48,14 @@ public class UsetDataDAOJdbc implements UserDataDao {
                 }
                 user.setId(generatedKey);
                 return user;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
         }
 
     }
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
-        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement("""
               SELECT * FROM "user"
               WHERE id = ?
@@ -68,15 +70,13 @@ public class UsetDataDAOJdbc implements UserDataDao {
                         return Optional.empty();
                     }
                 }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
         }
     }
 
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement("""
               SELECT * FROM "user"
               WHERE username = ?
@@ -91,24 +91,21 @@ public class UsetDataDAOJdbc implements UserDataDao {
                         return Optional.empty();
                     }
                 }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
         }
     }
 
     @Override
     public void delete(UserEntity user) {
-        try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement("""
               DELETE FROM "user"
-              WHERE username = ?
+              WHERE id = ?
               """)) {
-                ps.setObject(1, user.getUsername());
+                ps.setObject(1, user.getId());
                 ps.execute();
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
         }
 
     }

@@ -16,8 +16,6 @@ import java.util.UUID;
 
 public class CategoryDaoJdbc implements CategoryDao {
 
-  private static final Config CFG = Config.getInstance();
-
   private final Connection connection;
 
   public CategoryDaoJdbc(Connection connection) {
@@ -78,7 +76,6 @@ public class CategoryDaoJdbc implements CategoryDao {
 
   @Override
   public List<CategoryEntity> findAllByUsername(String username) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement("""
               SELECT * FROM category
               WHERE username = ?
@@ -97,31 +94,26 @@ public class CategoryDaoJdbc implements CategoryDao {
             return List.of();
           }
         }
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
       }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   @Override
   public void deleteCategory(CategoryEntity category) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement("""
               DELETE FROM category
               WHERE id = ?
               """)) {
         ps.setObject(1, category.getId());
         ps.execute();
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
     }
-
   }
 
   @Override
   public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement("""
               SELECT * FROM category
               WHERE username = ?
@@ -138,9 +130,8 @@ public class CategoryDaoJdbc implements CategoryDao {
             return Optional.empty();
           }
         }
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
     }
   }
 

@@ -60,7 +60,6 @@ public class SpendDaoJdbc implements SpendDao {
 
   @Override
   public Optional<SpendEntity> findSpendById(UUID id) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement("""
               SELECT * FROM spend
               WHERE id = ?
@@ -75,15 +74,13 @@ public class SpendDaoJdbc implements SpendDao {
             return Optional.empty();
           }
         }
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
     }
   }
 
   @Override
   public List<SpendEntity> findAllByUsername(String username) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement("""
               SELECT * FROM spend
               WHERE username = ?
@@ -102,38 +99,33 @@ public class SpendDaoJdbc implements SpendDao {
             return List.of();
           }
         }
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
     }
   }
 
   @Override
   public void deleteSpend(SpendEntity spend) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement("""
               DELETE FROM spend
               WHERE id = ?
               """)) {
         ps.setObject(1, spend.getId());
         ps.execute();
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
     }
   }
 
   @Override
   public void deleteByCategoryId(UUID id) {
-    try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
       try (PreparedStatement ps = connection.prepareStatement(
               "DELETE FROM spend WHERE category_id = ?"
       )) {
         ps.setObject(1, id);
         ps.execute();
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
+      } catch (SQLException e) {
+          throw new RuntimeException(e);
     }
   }
 
@@ -147,7 +139,7 @@ public class SpendDaoJdbc implements SpendDao {
     spend.setAmount(rs.getDouble("amount"));
     spend.setDescription(rs.getString("description"));
     UUID categoryId = rs.getObject("category_id", UUID.class);
-    CategoryEntity category = categoryDaoJdbc.findCategoryById(categoryId)
+    CategoryEntity category = new CategoryDaoJdbc(connection).findCategoryById(categoryId)
             .orElseThrow(() -> new SQLException("Category not found by id -> [%s]".formatted(categoryId)));
     spend.setCategory(category);
     return spend;
