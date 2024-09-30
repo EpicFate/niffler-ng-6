@@ -16,19 +16,4 @@ public class AuthUserEntity implements Serializable {
   private Boolean accountNonExpired = true;
   private Boolean accountNonLocked = true;
   private Boolean credentialsNonExpired = true;
-
-//  @OneToMany(fetch = EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-//  private List<AuthorityEntity> authorities = new ArrayList<>();
-//
-//  public void addAuthorities(AuthorityEntity... authorities) {
-//    for (AuthorityEntity authority : authorities) {
-//      this.authorities.add(authority);
-//      authority.setUser(this);
-//    }
-//  }
-//
-//  public void removeAuthority(AuthorityEntity authority) {
-//    this.authorities.remove(authority);
-//    authority.setUser(null);
-//  }
 }

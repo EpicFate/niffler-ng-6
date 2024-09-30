@@ -81,6 +81,26 @@ public class AuthUserDaoJdbc implements AuthUserDao {
         }
     }
 
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+        try (PreparedStatement ps = connection.prepareStatement("""
+                SELECT * FROM "user"
+                WHERE id = ?
+                """)) {
+            ps.setObject(1, id);
+            ps.execute();
+            try (ResultSet rs = ps.getResultSet()) {
+                if (rs.next()) {
+                    return Optional.of( fillUser(rs));
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private AuthUserEntity fillUser(ResultSet rs) throws SQLException {
         AuthUserEntity authUser = new AuthUserEntity();
