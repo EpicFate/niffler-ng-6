@@ -4,6 +4,8 @@ import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -76,6 +78,26 @@ public class AuthUserDaoJdbc implements AuthUserDao {
               """)) {
             ps.setObject(1, id);
             ps.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<AuthUserEntity> findAll() {
+        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\"")) {
+            ps.execute();
+            try (ResultSet rs = ps.getResultSet()) {
+                ArrayList<AuthUserEntity> list = new ArrayList<>();
+                if (rs.next()) {
+                    while (rs.next()) {
+                        list.add(fillUser(rs));
+                    }
+                    return list;
+                } else {
+                    return List.of();
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

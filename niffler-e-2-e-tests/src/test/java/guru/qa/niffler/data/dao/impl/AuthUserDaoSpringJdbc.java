@@ -3,6 +3,7 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,11 +48,6 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
   }
 
   @Override
-  public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
-    return Optional.empty();
-  }
-
-  @Override
   public Optional<AuthUserEntity> findById(UUID id) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     return Optional.ofNullable(
@@ -63,7 +60,18 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
   }
 
   @Override
-  public void deleteUser(UUID id) {
+  public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
+    throw new NotImplementedException();
+  }
 
+  @Override
+  public void deleteUser(UUID id) {
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public List<AuthUserEntity> findAll() {
+    return new JdbcTemplate(dataSource)
+            .query("SELECT * FROM \"user\"", AuthUserEntityRowMapper.instance);
   }
 }
