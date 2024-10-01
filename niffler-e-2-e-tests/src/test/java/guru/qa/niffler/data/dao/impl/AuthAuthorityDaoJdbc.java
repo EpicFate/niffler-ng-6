@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.dao.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
@@ -11,15 +12,11 @@ import java.util.UUID;
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
-    private final Connection connection;
-
-    public AuthAuthorityDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
+    private static final Config CFG = Config.getInstance();
 
     @Override
     public void create(AuthorityEntity... authority) {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("""
                         INSERT INTO authority (user_id,  authority)
                         VALUES (?, ?)
                         """,
@@ -38,7 +35,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public void deleteAuthority(UUID uuid) {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("""
               DELETE FROM authority
               WHERE user_id = ?
               """)) {
@@ -52,7 +49,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
     @Override
     public List<AuthorityEntity> findAll() {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM authority")) {
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("SELECT * FROM authority")) {
             ps.execute();
             try (ResultSet rs = ps.getResultSet()) {
                 ArrayList<AuthorityEntity> list = new ArrayList<>();

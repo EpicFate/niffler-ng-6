@@ -7,7 +7,6 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,19 +16,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static guru.qa.niffler.data.tpl.Connections.holder;
+
 public class SpendDaoJdbc implements SpendDao {
 
   private static final Config CFG = Config.getInstance();
 
-  private final Connection connection;
-
-  public SpendDaoJdbc(Connection connection) {
-    this.connection = connection;
-  }
-
   @Override
   public SpendEntity create(SpendEntity spend) {
-    try (PreparedStatement ps = connection.prepareStatement(
+    try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
         "INSERT INTO spend (username, spend_date, currency, amount, description, category_id) " +
             "VALUES ( ?, ?, ?, ?, ?, ?)",
         Statement.RETURN_GENERATED_KEYS
