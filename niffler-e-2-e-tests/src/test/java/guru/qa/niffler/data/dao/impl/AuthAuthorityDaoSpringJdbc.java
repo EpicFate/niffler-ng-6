@@ -17,10 +17,10 @@ import java.util.UUID;
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
     private static final Config CFG = Config.getInstance();
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
 
   @Override
   public void create(AuthorityEntity... authority) {
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
     jdbcTemplate.batchUpdate(
         "INSERT INTO authority (user_id, authority) VALUES (? , ?)",
         new BatchPreparedStatementSetter() {
@@ -40,12 +40,16 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
     @Override
     public void deleteAuthority(UUID uuid) {
-      throw new NotImplementedException();
+        jdbcTemplate.update("""
+              DELETE FROM authority
+              WHERE user_id = ?
+              """, uuid);
     }
 
     @Override
     public List<AuthorityEntity> findAll() {
-        return new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()))
-                .query("SELECT * FROM authority", AuthorityEntityRowMapper.instance);
+        return jdbcTemplate.query("""
+                SELECT * FROM authority
+                """, AuthorityEntityRowMapper.instance);
     }
 }

@@ -1,7 +1,5 @@
 package guru.qa.niffler.data.mapper;
 
-import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.impl.CategoryDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
@@ -24,12 +22,12 @@ public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
         SpendEntity spend = new SpendEntity();
         spend.setId(rs.getObject("id", UUID.class));
         spend.setUsername(rs.getString("username"));
-        spend.setCurrency(CurrencyValues.findByName(rs.getString("currency")));
+        spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
         spend.setSpendDate(rs.getDate("spend_date"));
         spend.setAmount(rs.getDouble("amount"));
         spend.setDescription(rs.getString("description"));
         UUID categoryId = rs.getObject("category_id", UUID.class);
-        CategoryEntity category = new CategoryDaoSpringJdbc(Databases.dataSource(Config.getInstance().spendJdbcUrl()))
+        CategoryEntity category = new CategoryDaoSpringJdbc()
                 .findCategoryById(categoryId)
                 .orElseThrow(() -> new SQLException("Category not found by id -> [%s]".formatted(categoryId)));
         spend.setCategory(category);

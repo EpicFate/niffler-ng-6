@@ -19,10 +19,11 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class AuthUserDaoJdbc implements AuthUserDao {
 
     private static final Config CFG = Config.getInstance();
+    private final Connection connection = holder(CFG.authJdbcUrl()).connection();
 
     @Override
     public AuthUserEntity create(AuthUserEntity user) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("""
+        try (PreparedStatement ps = connection.prepareStatement("""
                         INSERT INTO "user" (username, "password", enabled, account_non_expired, account_non_locked, credentials_non_expired)
                         VALUES (?, ?, ?, ?, ?, ?)
                         """,
@@ -54,10 +55,10 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("""
+        try (PreparedStatement ps = connection.prepareStatement("""
                 SELECT * FROM "user"
                 WHERE username = ?
-              """)) {
+                """)) {
             ps.setObject(1, authUser.getUsername());
             ps.execute();
 
@@ -75,10 +76,10 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public void deleteUser(UUID id) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("""
-              DELETE FROM "user"
-              WHERE id = ?
-              """)) {
+        try (PreparedStatement ps = connection.prepareStatement("""
+                DELETE FROM "user"
+                WHERE id = ?
+                """)) {
             ps.setObject(1, id);
             ps.execute();
         } catch (SQLException e) {
@@ -88,7 +89,9 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public List<AuthUserEntity> findAll() {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("SELECT * FROM \"user\"")) {
+        try (PreparedStatement ps = connection.prepareStatement("""
+                SELECT * FROM "user"
+                """)) {
             ps.execute();
             try (ResultSet rs = ps.getResultSet()) {
                 ArrayList<AuthUserEntity> list = new ArrayList<>();
@@ -108,7 +111,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("""
+        try (PreparedStatement ps = connection.prepareStatement("""
                 SELECT * FROM "user"
                 WHERE id = ?
                 """)) {
@@ -116,7 +119,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
             ps.execute();
             try (ResultSet rs = ps.getResultSet()) {
                 if (rs.next()) {
-                    return Optional.of( fillUser(rs));
+                    return Optional.of(fillUser(rs));
                 } else {
                     return Optional.empty();
                 }

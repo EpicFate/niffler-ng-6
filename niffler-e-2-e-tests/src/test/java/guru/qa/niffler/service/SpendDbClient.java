@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.Databases.transaction;
-
 public class SpendDbClient {
 
     private static final Config CFG = Config.getInstance();
@@ -27,7 +25,7 @@ public class SpendDbClient {
 
 
   public SpendJson createSpend(SpendJson spend) {
-    return jdbcTxTemplate(connection -> {
+    return jdbcTxTemplate.execute(() -> {
           SpendEntity spendEntity = SpendEntity.fromJson(spend);
           if (spendEntity.getCategory().getId() == null) {
             CategoryEntity categoryEntity = categoryDao.create(spendEntity.getCategory());
@@ -41,56 +39,51 @@ public class SpendDbClient {
   }
 
   public SpendJson findSpendByUUID(UUID id) {
-    return jdbcTxTemplate(connection -> {
-        return SpendJson.fromEntity(
-                spendDao.findSpendById(id)
-                        .orElseThrow(() -> new NoSuchElementException("Spend not found by id -> [%s]".formatted(id)))
-        );
-    });
+    return jdbcTxTemplate.execute(() ->
+            SpendJson.fromEntity(
+                    spendDao.findSpendById(id)
+                            .orElseThrow(() -> new NoSuchElementException("Spend not found by id -> [%s]"
+                                    .formatted(id)))
+    ));
   }
 
   public List<SpendJson> findAllByUsername(String username) {
-    return jdbcTxTemplate(connection -> {
-        return SpendJson.fromEntities(spendDao.findAllByUsername(username));
-
-    });
+    return jdbcTxTemplate.execute(() ->
+            SpendJson.fromEntities(spendDao.findAllByUsername(username)));
   }
 
   public void deleteSpend(SpendEntity spend) {
-      jdbcTxTemplate(connection -> {
+      jdbcTxTemplate.execute(() -> {
           spendDao.deleteSpend(spend);
+          return null;
       });
   }
 
     public CategoryJson createCategory(CategoryJson category) {
         CategoryEntity categoryEntity = CategoryEntity.fromJson(category);
-        return jdbcTxTemplate(connection -> {
-            return CategoryJson.fromEntity(
-                    categoryDao.create(categoryEntity));
-        });
+        return jdbcTxTemplate.execute(() ->
+                CategoryJson.fromEntity(categoryDao.create(categoryEntity)));
     }
 
     public CategoryJson findCategoryByUsernameAndCategoryName(String username, String categoryName) {
-        return jdbcTxTemplate(connection -> {
-            return CategoryJson.fromEntity(
-                    categoryDao.findCategoryByUsernameAndCategoryName(username, categoryName)
-                            .orElseThrow(() -> new NoSuchElementException(
-                                    "Category not found by username -> [%s] and categoryName -> [%s]"
-                                            .formatted(username, categoryName)))
-            );
-        });
+        return jdbcTxTemplate.execute(() ->
+                CategoryJson.fromEntity(
+                        categoryDao.findCategoryByUsernameAndCategoryName(username, categoryName)
+                                .orElseThrow(() -> new NoSuchElementException(
+                                        "Category not found by username -> [%s] and categoryName -> [%s]"
+                                                .formatted(username, categoryName)))
+        ));
     }
 
     public List<CategoryJson> findAllCategoryByUsername(String username) {
-        return jdbcTxTemplate(connection -> {
-            return CategoryJson.fromEntities(
-                    categoryDao.findAllByUsername(username));
-        });
+        return jdbcTxTemplate.execute(() ->
+                CategoryJson.fromEntities(categoryDao.findAllByUsername(username)));
     }
 
     public void deleteCategory(CategoryEntity spend) {
-        jdbcTxTemplate(connection -> {
+        jdbcTxTemplate.execute(() -> {
             categoryDao.deleteCategory(spend);
+            return null;
         });
     }
 }
