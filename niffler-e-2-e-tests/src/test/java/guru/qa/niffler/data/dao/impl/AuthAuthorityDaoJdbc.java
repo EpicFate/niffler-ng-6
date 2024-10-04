@@ -24,7 +24,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
                         VALUES (?, ?)
                         """)) {
             for (AuthorityEntity a : authority) {
-                ps.setObject(1, a.getUserId());
+                ps.setObject(1, a.getUser().getId());
                 ps.setString(2, a.getAuthority().name());
                 ps.addBatch();
                 ps.clearParameters();
