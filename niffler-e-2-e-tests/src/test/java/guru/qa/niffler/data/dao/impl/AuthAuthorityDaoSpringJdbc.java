@@ -17,30 +17,30 @@ import java.util.UUID;
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
     private static final Config CFG = Config.getInstance();
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+    private final String url = CFG.authJdbcUrl();
 
-  @Override
-  public void create(AuthorityEntity... authority) {
-    jdbcTemplate.batchUpdate(
-        "INSERT INTO authority (user_id, authority) VALUES (? , ?)",
-        new BatchPreparedStatementSetter() {
-          @Override
-          public void setValues(PreparedStatement ps, int i) throws SQLException {
-            ps.setObject(1, authority[i].getUser().getId());
-            ps.setString(2, authority[i].getAuthority().name());
-          }
+    @Override
+    public void create(AuthorityEntity... authority) {
+        new JdbcTemplate(DataSources.dataSource(url)).batchUpdate(
+                "INSERT INTO authority (user_id, authority) VALUES (? , ?)",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setObject(1, authority[i].getUser().getId());
+                        ps.setString(2, authority[i].getAuthority().name());
+                    }
 
-          @Override
-          public int getBatchSize() {
-            return authority.length;
-          }
-        }
-    );
-  }
+                    @Override
+                    public int getBatchSize() {
+                        return authority.length;
+                    }
+                }
+        );
+    }
 
     @Override
     public void deleteAuthority(UUID uuid) {
-        jdbcTemplate.update("""
+        new JdbcTemplate(DataSources.dataSource(url)).update("""
               DELETE FROM authority
               WHERE user_id = ?
               """, uuid);
@@ -48,7 +48,7 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
     @Override
     public List<AuthorityEntity> findAll() {
-        return jdbcTemplate.query("""
+        return new JdbcTemplate(DataSources.dataSource(url)).query("""
                 SELECT * FROM authority
                 """, AuthorityEntityRowMapper.instance);
     }

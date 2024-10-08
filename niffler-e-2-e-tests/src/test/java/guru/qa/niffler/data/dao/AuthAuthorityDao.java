@@ -7,10 +7,10 @@ import java.util.UUID;
 
 public interface AuthAuthorityDao {
 
-    void create(AuthorityEntity... authority);
+  void create(AuthorityEntity... authority);
 
-    void deleteAuthority(UUID uuid);
+  List<AuthorityEntity> findAll();
 
-    List<AuthorityEntity> findAll();
+  void deleteAuthority(UUID uuid);
 
 }

@@ -8,14 +8,14 @@ import java.util.UUID;
 
 public interface UdUserDao {
 
-  UserEntity create(UserEntity user);
+    UserEntity create(UserEntity user);
 
-  Optional<UserEntity> findById(UUID id);
+    Optional<UserEntity> findById(UUID id);
 
-  Optional<UserEntity> findByUsername(UserEntity user);
+    Optional<UserEntity> findByUsername(UserEntity user);
 
-  void delete(UserEntity user);
+    void delete(UserEntity user);
 
-  List<UserEntity> findAll();
+    List<UserEntity> findAll();
 
 }

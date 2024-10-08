@@ -16,144 +16,144 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 
 public class SpendDaoJdbc implements SpendDao {
 
-  private static final Config CFG = Config.getInstance();
-  private final Connection connection = holder(CFG.spendJdbcUrl()).connection();
+    private static final Config CFG = Config.getInstance();
+    private final String url = CFG.spendJdbcUrl();
 
-  @Override
-  public SpendEntity create(SpendEntity spend) {
-    try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO spend (username, spend_date, currency, amount, description, category_id) " +
-            "VALUES ( ?, ?, ?, ?, ?, ?)",
-        Statement.RETURN_GENERATED_KEYS
-    )) {
-      ps.setString(1, spend.getUsername());
-      ps.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
-      ps.setString(3, spend.getCurrency().name());
-      ps.setDouble(4, spend.getAmount());
-      ps.setString(5, spend.getDescription());
-      ps.setObject(6, spend.getCategory().getId());
+    @Override
+    public SpendEntity create(SpendEntity spend) {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement(
+                "INSERT INTO spend (username, spend_date, currency, amount, description, category_id) " +
+                        "VALUES ( ?, ?, ?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS
+        )) {
+            ps.setString(1, spend.getUsername());
+            ps.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
+            ps.setString(3, spend.getCurrency().name());
+            ps.setDouble(4, spend.getAmount());
+            ps.setString(5, spend.getDescription());
+            ps.setObject(6, spend.getCategory().getId());
 
-      ps.executeUpdate();
+            ps.executeUpdate();
 
-      final UUID generatedKey;
-      try (ResultSet rs = ps.getGeneratedKeys()) {
-        if (rs.next()) {
-          generatedKey = rs.getObject("id", UUID.class);
-        } else {
-          throw new SQLException("Can`t find id in ResultSet");
+            final UUID generatedKey;
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    generatedKey = rs.getObject("id", UUID.class);
+                } else {
+                    throw new SQLException("Can`t find id in ResultSet");
+                }
+            }
+            spend.setId(generatedKey);
+            return spend;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-      }
-      spend.setId(generatedKey);
-      return spend;
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
     }
-  }
 
-  @Override
-  public Optional<SpendEntity> findSpendById(UUID id) {
-      try (PreparedStatement ps = connection.prepareStatement("""
+    @Override
+    public Optional<SpendEntity> findSpendById(UUID id) {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
               SELECT * FROM spend
               WHERE id = ?
               """)) {
-        ps.setObject(1, id);
-        ps.execute();
+            ps.setObject(1, id);
+            ps.execute();
 
-        try (ResultSet rs = ps.getResultSet()) {
-          if (rs.next()) {
-            return Optional.of(fillSpend(rs));
-          } else {
-            return Optional.empty();
-          }
+            try (ResultSet rs = ps.getResultSet()) {
+                if (rs.next()) {
+                    return Optional.of(fillSpend(rs));
+                } else {
+                    return Optional.empty();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-      } catch (SQLException e) {
-          throw new RuntimeException(e);
     }
-  }
 
-  @Override
-  public List<SpendEntity> findAllByUsername(String username) {
-      try (PreparedStatement ps = connection.prepareStatement("""
+    @Override
+    public List<SpendEntity> findAllByUsername(String username) {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
               SELECT * FROM spend
               WHERE username = ?
               """)) {
-        ps.setObject(1, username);
-        ps.execute();
+            ps.setObject(1, username);
+            ps.execute();
 
-        try (ResultSet rs = ps.getResultSet()) {
-          ArrayList<SpendEntity> list = new ArrayList<>();
-          if (rs.next()) {
-            while (rs.next()) {
-              list.add(fillSpend(rs));
+            try (ResultSet rs = ps.getResultSet()) {
+                ArrayList<SpendEntity> list = new ArrayList<>();
+                if (rs.next()) {
+                    while (rs.next()) {
+                        list.add(fillSpend(rs));
+                    }
+                    return list;
+                } else {
+                    return List.of();
+                }
             }
-            return list;
-          } else {
-            return List.of();
-          }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-      } catch (SQLException e) {
-          throw new RuntimeException(e);
     }
-  }
 
-  @Override
-  public void deleteSpend(SpendEntity spend) {
-      try (PreparedStatement ps = connection.prepareStatement("""
+    @Override
+    public void deleteSpend(SpendEntity spend) {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
               DELETE FROM spend
               WHERE id = ?
               """)) {
-        ps.setObject(1, spend.getId());
-        ps.execute();
-      } catch (SQLException e) {
-          throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public void deleteByCategoryId(UUID id) {
-      try (PreparedStatement ps = connection.prepareStatement(
-              "DELETE FROM spend WHERE category_id = ?"
-      )) {
-        ps.setObject(1, id);
-        ps.execute();
-      } catch (SQLException e) {
-          throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public List<SpendEntity> findAll() {
-    try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM spend")) {
-      ps.execute();
-      try (ResultSet rs = ps.getResultSet()) {
-        ArrayList<SpendEntity> list = new ArrayList<>();
-        if (rs.next()) {
-          while (rs.next()) {
-            list.add(fillSpend(rs));
-          }
-          return list;
-        } else {
-          return List.of();
+            ps.setObject(1, spend.getId());
+            ps.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-      }
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
     }
-  }
+
+    @Override
+    public void deleteByCategoryId(UUID id) {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement(
+                "DELETE FROM spend WHERE category_id = ?"
+        )) {
+            ps.setObject(1, id);
+            ps.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<SpendEntity> findAll() {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("SELECT * FROM spend")) {
+            ps.execute();
+            try (ResultSet rs = ps.getResultSet()) {
+                ArrayList<SpendEntity> list = new ArrayList<>();
+                if (rs.next()) {
+                    while (rs.next()) {
+                        list.add(fillSpend(rs));
+                    }
+                    return list;
+                } else {
+                    return List.of();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
-  private SpendEntity fillSpend(ResultSet rs) throws SQLException {
-    SpendEntity spend = new SpendEntity();
-    spend.setId(rs.getObject("id", UUID.class));
-    spend.setUsername(rs.getString("username"));
-    spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-    spend.setSpendDate(rs.getDate("spend_date"));
-    spend.setAmount(rs.getDouble("amount"));
-    spend.setDescription(rs.getString("description"));
-    UUID categoryId = rs.getObject("category_id", UUID.class);
-    CategoryEntity category = new CategoryDaoJdbc().findCategoryById(categoryId)
-            .orElseThrow(() -> new SQLException("Category not found by id -> [%s]".formatted(categoryId)));
-    spend.setCategory(category);
-    return spend;
-  }
+    private SpendEntity fillSpend(ResultSet rs) throws SQLException {
+        SpendEntity spend = new SpendEntity();
+        spend.setId(rs.getObject("id", UUID.class));
+        spend.setUsername(rs.getString("username"));
+        spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+        spend.setSpendDate(rs.getDate("spend_date"));
+        spend.setAmount(rs.getDouble("amount"));
+        spend.setDescription(rs.getString("description"));
+        UUID categoryId = rs.getObject("category_id", UUID.class);
+        CategoryEntity category = new CategoryDaoJdbc().findCategoryById(categoryId)
+                .orElseThrow(() -> new SQLException("Category not found by id -> [%s]".formatted(categoryId)));
+        spend.setCategory(category);
+        return spend;
+    }
 }

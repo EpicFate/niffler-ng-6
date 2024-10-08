@@ -20,12 +20,12 @@ import java.util.UUID;
 public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     private static final Config CFG = Config.getInstance();
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+    private final String url = CFG.authJdbcUrl();
 
     @Override
     public AuthUserEntity create(AuthUserEntity user) {
         KeyHolder kh = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
+        new JdbcTemplate(DataSources.dataSource(url)).update(con -> {
             PreparedStatement ps = con.prepareStatement("""
                             INSERT INTO "user" (username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired)
                             VALUES (?,?,?,?,?,?)
@@ -49,7 +49,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
         return Optional.ofNullable(
-                jdbcTemplate.queryForObject("""
+                new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
                         SELECT * FROM "user"
                         WHERE id = ?
                         """, AuthUserEntityRowMapper.instance, id
@@ -60,7 +60,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
     @Override
     public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
         return Optional.ofNullable((
-                jdbcTemplate.queryForObject("""
+                new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
                         SELECT * FROM "user"
                         WHERE username = ?
                         """, AuthUserEntityRowMapper.instance, authUser.getUsername())
@@ -70,7 +70,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     @Override
     public void deleteUser(UUID id) {
-        jdbcTemplate.update("""
+        new JdbcTemplate(DataSources.dataSource(url)).update("""
                 DELETE FROM "user"
                 WHERE id = ?
                 """, id);
@@ -78,7 +78,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     @Override
     public List<AuthUserEntity> findAll() {
-        return jdbcTemplate.query("""
+        return new JdbcTemplate(DataSources.dataSource(url)).query("""
                 SELECT * FROM "user"
                 """, AuthUserEntityRowMapper.instance);
     }

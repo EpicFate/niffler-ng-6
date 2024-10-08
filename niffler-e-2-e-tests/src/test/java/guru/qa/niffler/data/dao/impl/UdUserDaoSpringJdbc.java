@@ -18,12 +18,12 @@ import java.util.UUID;
 public class UdUserDaoSpringJdbc implements UdUserDao {
 
     private static final Config CFG = Config.getInstance();
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+    private final String url = CFG.userdataJdbcUrl();
 
     @Override
     public UserEntity create(UserEntity user) {
         KeyHolder kh = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
+        new JdbcTemplate(DataSources.dataSource(url)).update(con -> {
             PreparedStatement ps = con.prepareStatement(
                     "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
                             "VALUES (?,?,?,?,?,?,?)",
@@ -47,7 +47,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     @Override
     public Optional<UserEntity> findById(UUID id) {
         return Optional.ofNullable(
-                jdbcTemplate.queryForObject("""
+                new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
                                 SELECT * FROM "user"
                                 WHERE id = ?
                                 """, UdUserEntityRowMapper.instance, id)
@@ -57,7 +57,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     @Override
     public Optional<UserEntity> findByUsername(UserEntity user) {
         return Optional.ofNullable(
-                jdbcTemplate.queryForObject("""
+                new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
                                 SELECT * FROM "user"
                                 WHERE username = ?
                                 """, UdUserEntityRowMapper.instance, user)
@@ -66,7 +66,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
 
     @Override
     public void delete(UserEntity user) {
-        jdbcTemplate.update("""
+        new JdbcTemplate(DataSources.dataSource(url)).update("""
                         DELETE FROM "user"
                         WHERE id = ?
                         """, user.getId());
@@ -75,7 +75,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
 
     @Override
     public List<UserEntity> findAll() {
-        return jdbcTemplate.query("""
+        return new JdbcTemplate(DataSources.dataSource(url)).query("""
                 SELECT * FROM "user"
                 """, UdUserEntityRowMapper.instance);
     }

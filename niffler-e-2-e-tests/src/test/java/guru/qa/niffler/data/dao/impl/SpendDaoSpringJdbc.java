@@ -18,12 +18,12 @@ import java.util.UUID;
 public class SpendDaoSpringJdbc implements SpendDao {
 
     private static final Config CFG = Config.getInstance();
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
+    private final String url = CFG.spendJdbcUrl();
 
     @Override
     public SpendEntity create(SpendEntity spend) {
         KeyHolder kh = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
+        new JdbcTemplate(DataSources.dataSource(url)).update(con -> {
             PreparedStatement ps = con.prepareStatement("""
                     INSERT INTO spend (username, spend_date, currency, amount, description, category_id)
                     VALUES ( ?, ?, ?, ?, ?, ?)
@@ -42,7 +42,8 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public Optional<SpendEntity> findSpendById(UUID id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject("""
+        return Optional.ofNullable(new JdbcTemplate(DataSources.dataSource(url))
+                .queryForObject("""
                         SELECT * FROM spend
                         WHERE id = ?
                         """, SpendEntityRowMapper.instance, id
@@ -52,7 +53,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAllByUsername(String username) {
-        return jdbcTemplate.query("""
+        return new JdbcTemplate(DataSources.dataSource(url)).query("""
                 SELECT * FROM spend
                 WHERE username = ?
                 """, SpendEntityRowMapper.instance, username
@@ -61,7 +62,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public void deleteSpend(SpendEntity spend) {
-        jdbcTemplate.update("""
+        new JdbcTemplate(DataSources.dataSource(url)).update("""
                 DELETE FROM spend
                 WHERE id = ?
                 """, spend.getId());
@@ -70,7 +71,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public void deleteByCategoryId(UUID id) {
-        jdbcTemplate.update("""
+        new JdbcTemplate(DataSources.dataSource(url)).update("""
                 DELETE FROM spend
                 WHERE category_id = ?
                 """, id);
@@ -78,6 +79,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        return jdbcTemplate.query("SELECT * FROM spend", SpendEntityRowMapper.instance);
+        return new JdbcTemplate(DataSources.dataSource(url))
+                .query("SELECT * FROM spend", SpendEntityRowMapper.instance);
     }
 }

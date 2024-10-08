@@ -19,11 +19,11 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class AuthUserDaoJdbc implements AuthUserDao {
 
     private static final Config CFG = Config.getInstance();
-    private final Connection connection = holder(CFG.authJdbcUrl()).connection();
+    private final String url = CFG.authJdbcUrl();
 
     @Override
     public AuthUserEntity create(AuthUserEntity user) {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
                         INSERT INTO "user" (username, "password", enabled, account_non_expired, account_non_locked, credentials_non_expired)
                         VALUES (?, ?, ?, ?, ?, ?)
                         """,
@@ -55,7 +55,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
                 SELECT * FROM "user"
                 WHERE username = ?
                 """)) {
@@ -76,7 +76,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public void deleteUser(UUID id) {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
                 DELETE FROM "user"
                 WHERE id = ?
                 """)) {
@@ -89,7 +89,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public List<AuthUserEntity> findAll() {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
                 SELECT * FROM "user"
                 """)) {
             ps.execute();
@@ -111,7 +111,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
-        try (PreparedStatement ps = connection.prepareStatement("""
+        try (PreparedStatement ps = holder(url).connection().prepareStatement("""
                 SELECT * FROM "user"
                 WHERE id = ?
                 """)) {
