@@ -16,11 +16,11 @@ import static guru.qa.niffler.data.tpl.Connections.holder;
 public class UdUserDaoJdbc implements UdUserDao {
 
     private static final Config CFG = Config.getInstance();
-    private final Connection connection = holder(CFG.userdataJdbcUrl()).connection();
+    private final Connection CONNECTION = holder(CFG.userdataJdbcUrl()).connection();
 
     @Override
     public UserEntity create(UserEntity user) {
-            try (PreparedStatement ps = connection.prepareStatement(
+            try (PreparedStatement ps = CONNECTION.prepareStatement(
                     """
                             INSERT INTO "user" (username, currency, firstname, surname, photo, photo_small, full_name)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -55,7 +55,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
-            try (PreparedStatement ps = connection.prepareStatement("""
+            try (PreparedStatement ps = CONNECTION.prepareStatement("""
               SELECT * FROM "user"
               WHERE id = ?
               """)) {
@@ -76,7 +76,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
     @Override
     public Optional<UserEntity> findByUsername(UserEntity user) {
-            try (PreparedStatement ps = connection.prepareStatement("""
+            try (PreparedStatement ps = CONNECTION.prepareStatement("""
               SELECT * FROM "user"
               WHERE username = ?
               """)) {
@@ -97,7 +97,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
     @Override
     public void delete(UserEntity user) {
-            try (PreparedStatement ps = connection.prepareStatement("""
+            try (PreparedStatement ps = CONNECTION.prepareStatement("""
               DELETE FROM "user"
               WHERE id = ?
               """)) {
@@ -110,7 +110,7 @@ public class UdUserDaoJdbc implements UdUserDao {
 
     @Override
     public List<UserEntity> findAll() {
-        try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM \"user\"")) {
+        try (PreparedStatement ps = CONNECTION.prepareStatement("SELECT * FROM \"user\"")) {
             ps.execute();
             try (ResultSet rs = ps.getResultSet()) {
                 ArrayList<UserEntity> list = new ArrayList<>();
