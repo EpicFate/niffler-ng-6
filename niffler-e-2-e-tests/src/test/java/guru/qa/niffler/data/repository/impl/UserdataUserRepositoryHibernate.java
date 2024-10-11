@@ -6,6 +6,7 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -46,13 +47,12 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
   }
 
   @Override
-  public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
-    entityManager.joinTransaction();
-    addressee.addFriends(FriendshipStatus.PENDING, requester);
+  public UserEntity update(UserEntity user) {
+    throw new NotImplementedException();
   }
 
   @Override
-  public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
+  public void sendInvitation(UserEntity requester, UserEntity addressee) {
     entityManager.joinTransaction();
     requester.addFriends(FriendshipStatus.PENDING, addressee);
   }
@@ -62,5 +62,14 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
     entityManager.joinTransaction();
     requester.addFriends(FriendshipStatus.ACCEPTED, addressee);
     addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
+  }
+
+  @Override
+  public void remove(UserEntity user) {
+    entityManager.joinTransaction();
+    entityManager.remove(user);
+//    entityManager.joinTransaction();
+//    entityManager.remove(findById(user.getId())
+//            .orElseThrow());
   }
 }

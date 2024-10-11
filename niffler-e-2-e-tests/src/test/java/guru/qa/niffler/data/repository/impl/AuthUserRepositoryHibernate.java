@@ -5,6 +5,7 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,12 +36,26 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
   public Optional<AuthUserEntity> findByUsername(String username) {
     try {
       return Optional.of(
-          entityManager.createQuery("select u from UserEntity u where u.username =: username", AuthUserEntity.class)
+          entityManager.createQuery("""
+                          SELECT u FROM UserEntity u
+                          WHERE u.username =: username
+                          """, AuthUserEntity.class)
               .setParameter("username", username)
               .getSingleResult()
       );
     } catch (NoResultException e) {
       return Optional.empty();
     }
+  }
+
+  @Override
+  public AuthUserEntity update(AuthUserEntity user) {
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public void remove(AuthUserEntity user) {
+    entityManager.joinTransaction();
+    entityManager.remove(user);
   }
 }

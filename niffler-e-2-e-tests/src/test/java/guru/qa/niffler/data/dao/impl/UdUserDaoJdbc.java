@@ -75,12 +75,12 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findByUsername(UserEntity user) {
+    public Optional<UserEntity> findByUsername(String user) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement("""
               SELECT * FROM "user"
               WHERE username = ?
               """)) {
-            ps.setObject(1, user.getUsername());
+            ps.setObject(1, user);
             ps.execute();
 
             try (ResultSet rs = ps.getResultSet()) {
@@ -96,7 +96,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public void delete(UserEntity user) {
+    public void remove(UserEntity user) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement("""
               DELETE FROM "user"
               WHERE id = ?

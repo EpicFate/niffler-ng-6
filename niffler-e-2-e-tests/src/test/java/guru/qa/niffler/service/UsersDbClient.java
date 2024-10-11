@@ -20,8 +20,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Arrays;
 
-import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
-
 
 public class UsersDbClient {
 
@@ -52,46 +50,6 @@ public class UsersDbClient {
                     );
                 }
         );
-    }
-
-    public void addIncomeInvitation(UserJson targetUser, int count) {
-        if (count > 0) {
-            UserEntity targetEntity = userdataUserRepository.findById(
-                    targetUser.id()
-            ).orElseThrow();
-
-            for (int i = 0; i < count; i++) {
-                xaTransactionTemplate.execute(() -> {
-                            String username = randomUsername();
-                            AuthUserEntity authUser = authUserEntity(username, "12345");
-                            authUserRepository.create(authUser);
-                            UserEntity adressee = userdataUserRepository.create(userEntity(username));
-                            userdataUserRepository.addIncomeInvitation(targetEntity, adressee);
-                            return null;
-                        }
-                );
-            }
-        }
-    }
-
-    public void addOutcomeInvitation(UserJson targetUser, int count) {
-        if (count > 0) {
-            UserEntity targetEntity = userdataUserRepository.findById(
-                    targetUser.id()
-            ).orElseThrow();
-
-            for (int i = 0; i < count; i++) {
-                xaTransactionTemplate.execute(() -> {
-                            String username = randomUsername();
-                            AuthUserEntity authUser = authUserEntity(username, "12345");
-                            authUserRepository.create(authUser);
-                            UserEntity adressee = userdataUserRepository.create(userEntity(username));
-                            userdataUserRepository.addOutcomeInvitation(targetEntity, adressee);
-                            return null;
-                        }
-                );
-            }
-        }
     }
 
     void addFriend(UserJson targetUser, int count) {
@@ -125,4 +83,18 @@ public class UsersDbClient {
         );
         return authUser;
     }
+
+    //    public void deleteUser(UserJson user) {
+//        txTemplate.execute(status -> {
+//            AuthUserEntity authUser = new AuthUserEntity();
+//            authUser.setUsername(user.username());
+//            authUser = authUserDao.findUserByName(authUser)
+//                    .orElseThrow(() -> new NoSuchElementException("User not found by username -> [%s]"
+//                            .formatted(user.username())));
+//            authAuthorityDao.deleteAuthority(authUser.getId());
+//            authUserDao.deleteUser(authUser.getId());
+//            udUserDao.delete(UserEntity.fromJson(user));
+//            return null;
+//        });
+//    }
 }

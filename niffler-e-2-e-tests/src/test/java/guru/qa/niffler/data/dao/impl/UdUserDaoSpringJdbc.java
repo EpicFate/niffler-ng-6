@@ -55,7 +55,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findByUsername(UserEntity user) {
+    public Optional<UserEntity> findByUsername(String user) {
         return Optional.ofNullable(
                 new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
                                 SELECT * FROM "user"
@@ -65,7 +65,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public void delete(UserEntity user) {
+    public void remove(UserEntity user) {
         new JdbcTemplate(DataSources.dataSource(url)).update("""
                         DELETE FROM "user"
                         WHERE id = ?

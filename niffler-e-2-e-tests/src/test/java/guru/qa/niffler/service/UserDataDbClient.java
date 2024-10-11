@@ -3,7 +3,6 @@ package guru.qa.niffler.service;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.dao.impl.UdUserDaoJdbc;
-import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 
@@ -33,18 +32,18 @@ public class UserDataDbClient {
         );
     }
 
-    public UserEntity findByUsername(UserEntity user) {
+    public UserEntity findByUsername(String user) {
         return xaTransactionTemplate.execute(() -> udUserDao.findByUsername(user)
                 .orElseThrow(() ->
                         new NoSuchElementException("User not found by username -> [%s]"
-                                .formatted(user.getUsername()))
+                                .formatted(user))
                 )
         );
     }
 
     public void delete(UserEntity user) {
         xaTransactionTemplate.execute(() -> {
-            udUserDao.delete(user);
+            udUserDao.remove(user);
             return null;
         });
     }

@@ -6,6 +6,7 @@ import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
 import guru.qa.niffler.data.repository.AuthUserRepository;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -100,6 +101,16 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
 
   @Override
   public Optional<AuthUserEntity> findByUsername(String username) {
-    return Optional.empty();
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public AuthUserEntity update(AuthUserEntity user) {
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public void remove(AuthUserEntity user) {
+    throw new NotImplementedException();
   }
 }
