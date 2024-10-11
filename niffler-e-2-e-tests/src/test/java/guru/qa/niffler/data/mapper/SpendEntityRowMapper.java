@@ -1,6 +1,5 @@
 package guru.qa.niffler.data.mapper;
 
-import guru.qa.niffler.data.dao.impl.CategoryDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
@@ -12,25 +11,21 @@ import java.util.UUID;
 
 public class SpendEntityRowMapper implements RowMapper<SpendEntity> {
 
-    public static final SpendEntityRowMapper instance = new SpendEntityRowMapper();
+  public static final SpendEntityRowMapper instance = new SpendEntityRowMapper();
 
-    private SpendEntityRowMapper() {
-    }
+  private SpendEntityRowMapper() {
+  }
 
-    @Override
-    public SpendEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        SpendEntity spend = new SpendEntity();
-        spend.setId(rs.getObject("id", UUID.class));
-        spend.setUsername(rs.getString("username"));
-        spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-        spend.setSpendDate(rs.getDate("spend_date"));
-        spend.setAmount(rs.getDouble("amount"));
-        spend.setDescription(rs.getString("description"));
-        UUID categoryId = rs.getObject("category_id", UUID.class);
-        CategoryEntity category = new CategoryDaoSpringJdbc()
-                .findCategoryById(categoryId)
-                .orElseThrow(() -> new SQLException("Category not found by id -> [%s]".formatted(categoryId)));
-        spend.setCategory(category);
-        return spend;
-    }
+  @Override
+  public SpendEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+    SpendEntity result = new SpendEntity();
+    result.setId(rs.getObject("id", UUID.class));
+    result.setUsername(rs.getString("username"));
+    result.setSpendDate(rs.getDate("spend_date"));
+    result.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+    result.setAmount(rs.getDouble("amount"));
+    result.setDescription(rs.getString("description"));
+    result.setCategory(new CategoryEntity(rs.getObject("category_id", UUID.class)));
+    return result;
+  }
 }

@@ -3,7 +3,9 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
+import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.apache.commons.lang3.NotImplementedException;
 import guru.qa.niffler.data.tpl.DataSources;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,24 +50,43 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
-        return Optional.ofNullable(
-                new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
-                        SELECT * FROM "user"
-                        WHERE id = ?
-                        """, AuthUserEntityRowMapper.instance, id
-                )
-        );
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject("""
+                                SELECT * FROM "user"
+                                WHERE id = ?
+                                """,
+                            AuthUserEntityRowMapper.instance, id
+                    )
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
-        return Optional.ofNullable((
-                new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
-                        SELECT * FROM "user"
-                        WHERE username = ?
-                        """, AuthUserEntityRowMapper.instance, authUser.getUsername())
-                )
-        );
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject("""
+                                SELECT * FROM "user"
+                                WHERE username = ?
+                                """,
+                            AuthUserEntityRowMapper.instance, username
+                    )
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<AuthUserEntity> findAll() {
+        return new JdbcTemplate(DataSources.dataSource(url)).query("""
+                SELECT * FROM "user"
+                """, AuthUserEntityRowMapper.instance);
     }
 
     @Override
@@ -74,12 +95,5 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
                 DELETE FROM "user"
                 WHERE id = ?
                 """, id);
-    }
-
-    @Override
-    public List<AuthUserEntity> findAll() {
-        return new JdbcTemplate(DataSources.dataSource(url)).query("""
-                SELECT * FROM "user"
-                """, AuthUserEntityRowMapper.instance);
     }
 }

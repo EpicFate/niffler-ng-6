@@ -7,17 +7,17 @@ import java.util.UUID;
 
 public interface UserdataUserRepository {
 
-  UserEntity create(UserEntity user);
+    UserEntity create(UserEntity user);
 
-  Optional<UserEntity> findById(UUID id);
+    UserEntity update(UserEntity user);
 
-  Optional<UserEntity> findByUsername(String username);
+    Optional<UserEntity> findById(UUID id);
 
-  UserEntity update(UserEntity user);
+    Optional<UserEntity> findByUsername(String username);
 
-  void sendInvitation(UserEntity requester, UserEntity addressee);
+    void addFriendshipRequest(UserEntity requester, UserEntity addressee);
 
-  void addFriend(UserEntity requester, UserEntity addressee);
+    void addFriend(UserEntity requester, UserEntity addressee);
 
-  void remove(UserEntity user);
+    void remove(UserEntity user);
 }

@@ -29,7 +29,8 @@ public class SpendRepositoryHibernate implements SpendRepository {
 
     @Override
     public SpendEntity update(SpendEntity spend) {
-        throw new NotImplementedException();
+        entityManager.joinTransaction();
+        return entityManager.merge(spend);
     }
 
     @Override
@@ -47,17 +48,12 @@ public class SpendRepositoryHibernate implements SpendRepository {
     }
 
     @Override
-    public Optional<CategoryEntity> findCategoryByUserNameAndSpendName(String username, String name) {
+    public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String name) {
         try {
             return Optional.of(
-                    entityManager.createQuery("""
-                                    SELECT с
-                                    FROM CategoryEntity с, SpendEntity s
-                                    WHERE с.username =: username
-                                    AND s.description =: description
-                                    """, CategoryEntity.class)
+                    entityManager.createQuery("select c from CategoryEntity c where c.username =: username and c.name =: name", CategoryEntity.class)
                             .setParameter("username", username)
-                            .setParameter("description", name)
+                            .setParameter("name", name)
                             .getSingleResult()
             );
         } catch (NoResultException e) {
@@ -77,9 +73,9 @@ public class SpendRepositoryHibernate implements SpendRepository {
         try {
             return Optional.of(
                     entityManager.createQuery(
-                            "SELECT s FROM SpendEntity s " +
-                                    "WHERE s.username =: username " +
-                                    "AND s.description =: description",
+                                    "SELECT s FROM SpendEntity s " +
+                                            "WHERE s.username =: username " +
+                                            "AND s.description =: description",
                                     SpendEntity.class)
                             .setParameter("username", username)
                             .setParameter("description", description)
@@ -90,15 +86,15 @@ public class SpendRepositoryHibernate implements SpendRepository {
         }
     }
 
-    @Override
-    public void remove(SpendEntity spend) {
-        entityManager.joinTransaction();
-        entityManager.remove(spend);
-    }
+  @Override
+  public void remove(SpendEntity spend) {
+    entityManager.joinTransaction();
+    entityManager.remove(spend);
+  }
 
-    @Override
-    public void removeCategory(CategoryEntity category) {
-        entityManager.joinTransaction();
-        entityManager.remove(category);
-    }
+  @Override
+  public void removeCategory(CategoryEntity category) {
+    entityManager.joinTransaction();
+    entityManager.remove(category);
+  }
 }

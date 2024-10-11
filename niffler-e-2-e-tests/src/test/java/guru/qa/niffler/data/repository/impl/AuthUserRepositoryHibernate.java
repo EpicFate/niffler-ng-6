@@ -14,48 +14,48 @@ import static guru.qa.niffler.data.jpa.EntityManagers.em;
 
 public class AuthUserRepositoryHibernate implements AuthUserRepository {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  private final EntityManager entityManager = em(CFG.authJdbcUrl());
+    private final EntityManager entityManager = em(CFG.authJdbcUrl());
 
-  @Override
-  public AuthUserEntity create(AuthUserEntity user) {
-    entityManager.joinTransaction();
-    entityManager.persist(user);
-    return user;
-  }
+    @Override
+    public AuthUserEntity create(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.persist(user);
+        return user;
+    }
 
-  @Override
-  public Optional<AuthUserEntity> findById(UUID id) {
-    return Optional.ofNullable(
-        entityManager.find(AuthUserEntity.class, id)
-    );
-  }
+    @Override
+    public Optional<AuthUserEntity> findById(UUID id) {
+        return Optional.ofNullable(
+                entityManager.find(AuthUserEntity.class, id)
+        );
+    }
 
-  @Override
-  public Optional<AuthUserEntity> findByUsername(String username) {
-    try {
-      return Optional.of(
-          entityManager.createQuery("""
+    @Override
+    public Optional<AuthUserEntity> findByUsername(String username) {
+        try {
+            return Optional.of(
+                    entityManager.createQuery("""
                           SELECT u FROM UserEntity u
                           WHERE u.username =: username
                           """, AuthUserEntity.class)
-              .setParameter("username", username)
-              .getSingleResult()
-      );
-    } catch (NoResultException e) {
-      return Optional.empty();
+                            .setParameter("username", username)
+                            .getSingleResult()
+            );
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
-  }
 
-  @Override
-  public AuthUserEntity update(AuthUserEntity user) {
-    throw new NotImplementedException();
-  }
+    @Override
+    public AuthUserEntity update(AuthUserEntity user) {
+        throw new NotImplementedException();
+    }
 
-  @Override
-  public void remove(AuthUserEntity user) {
-    entityManager.joinTransaction();
-    entityManager.remove(user);
-  }
+    @Override
+    public void remove(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.remove(user);
+    }
 }
