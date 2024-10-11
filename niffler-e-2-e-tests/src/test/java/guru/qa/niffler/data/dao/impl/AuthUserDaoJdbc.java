@@ -77,14 +77,12 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
 
     @Override
-    public Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser) {
+    public Optional<AuthUserEntity> findByUsername(String username) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement("""
-                SELECT * FROM "user"
-                WHERE username = ?
+                SELECT * FROM "user" WHERE username = ?
                 """)) {
-            ps.setObject(1, authUser.getUsername());
+            ps.setString(1, username);
             ps.execute();
-
             try (ResultSet rs = ps.getResultSet()) {
                 if (rs.next()) {
                     return Optional.ofNullable(
@@ -105,18 +103,14 @@ public class AuthUserDaoJdbc implements AuthUserDao {
                 SELECT * FROM "user"
                 """)) {
             ps.execute();
+            ArrayList<AuthUserEntity> result = new ArrayList<>();
             try (ResultSet rs = ps.getResultSet()) {
-                ArrayList<AuthUserEntity> list = new ArrayList<>();
-                if (rs.next()) {
-                    while (rs.next()) {
-                        result.add(
-                                AuthUserEntityRowMapper.instance.mapRow(rs, rs.getRow())
-                        );
-                    }
-                    return list;
-                } else {
-                    return List.of();
+                while (rs.next()) {
+                    result.add(
+                            AuthUserEntityRowMapper.instance.mapRow(rs, rs.getRow())
+                    );
                 }
+                return result;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -1,21 +1,13 @@
 package guru.qa.niffler.data.repository.impl;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.dao.impl.UdUserDaoJdbc;
-import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
-import org.apache.commons.lang3.NotImplementedException;
 
-import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
-
-import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.ACCEPTED;
-import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.PENDING;
-import static guru.qa.niffler.data.tpl.Connections.holder;
 
 public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 

@@ -5,8 +5,6 @@ import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.mapper.AuthorityEntityRowMapper;
-import org.apache.commons.lang3.NotImplementedException;
-import guru.qa.niffler.data.tpl.DataSources;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 

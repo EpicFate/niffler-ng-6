@@ -5,6 +5,7 @@ import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -45,5 +46,10 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
     addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
     udUserDao.update(requester);
     udUserDao.update(addressee);
+  }
+
+  @Override
+  public void remove(UserEntity user) {
+    throw new NotImplementedException();
   }
 }

@@ -10,6 +10,7 @@ import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.extractor.AuthUserEntityExtractor;
 import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.repository.AuthUserRepository;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
@@ -28,6 +29,11 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     authUserDao.create(user);
     authAuthorityDao.create(user.getAuthorities().toArray(new AuthorityEntity[0]));
     return user;
+  }
+
+  @Override
+  public AuthUserEntity update(AuthUserEntity user) {
+    throw new NotImplementedException();
   }
 
   @Override
@@ -74,5 +80,10 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
             username
         )
     );
+  }
+
+  @Override
+  public void remove(AuthUserEntity user) {
+    throw new NotImplementedException();
   }
 }

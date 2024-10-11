@@ -12,7 +12,7 @@ public interface AuthUserDao {
 
     Optional<AuthUserEntity> findById(UUID id);
 
-    Optional<AuthUserEntity> findUserByName(AuthUserEntity authUser);
+    Optional<AuthUserEntity> findByUsername(String username);
 
     List<AuthUserEntity> findAll();
 
