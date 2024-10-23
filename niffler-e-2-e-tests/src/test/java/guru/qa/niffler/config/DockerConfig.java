@@ -1,18 +1,17 @@
 package guru.qa.niffler.config;
 
+import javax.annotation.Nonnull;
+
 enum DockerConfig implements Config {
     INSTANCE;
 
+    @Nonnull
     @Override
     public String frontUrl() {
-        return "http://frontend.niffler.dc";
+        return "";
     }
 
-    @Override
-    public String spendUrl() {
-        return "http://frontend.niffler.dc:8093/";
-    }
-
+    @Nonnull
     @Override
     public String spendJdbcUrl() {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-spend";
@@ -25,9 +24,16 @@ enum DockerConfig implements Config {
 
     @Override
     public String authUrl() {
-        return "http://auth.niffler.dc:9000";
+        return "";
     }
 
+    @Nonnull
+    @Override
+    public String authJdbcUrl() {
+        return "";
+    }
+
+    @Nonnull
     @Override
     public String authJdbcUrl() {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-auth";
@@ -35,14 +41,40 @@ enum DockerConfig implements Config {
 
     @Override
     public String gatewayUrl() {
-        return "http://currency.niffler.dc:8091";
+        return "";
     }
 
+    @Nonnull
     @Override
     public String userdataUrl() {
-        return "http://userdata.niffler.dc:8089";
+        return "";
     }
 
+    @Nonnull
+    @Override
+    public String userdataJdbcUrl() {
+        return "";
+    }
+
+    @Nonnull
+    @Override
+    public String spendUrl() {
+        return "";
+    }
+
+    @Nonnull
+    @Override
+    public String spendJdbcUrl() {
+        return "";
+    }
+
+    @Nonnull
+    @Override
+    public String currencyJdbcUrl() {
+        return "";
+    }
+
+    @Nonnull
     @Override
     public String userdataJdbcUrl() {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-userdata";
@@ -50,6 +82,6 @@ enum DockerConfig implements Config {
 
     @Override
     public String ghUrl() {
-        return "https://api.github.com/";
+        return "";
     }
 }

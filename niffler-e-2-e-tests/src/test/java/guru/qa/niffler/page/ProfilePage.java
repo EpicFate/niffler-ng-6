@@ -6,6 +6,8 @@ import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.common.CategoryButtons;
 import guru.qa.niffler.common.ModalButtons;
 import org.openqa.selenium.By;
+import guru.qa.niffler.config.Config;
+import guru.qa.niffler.page.component.Calendar;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -14,7 +16,10 @@ import static guru.qa.niffler.common.CategoryButtons.UNARCHIVE_CATEGORY;
 import static guru.qa.niffler.common.ModalButtons.ARCHIVE;
 import static guru.qa.niffler.common.ModalButtons.UNARCHIVE;
 
-public class ProfilePage {
+@ParametersAreNonnullByDefault
+public class ProfilePage extends BasePage<ProfilePage> {
+
+    public static String url = Config.getInstance().frontUrl() + "profile";
 
     private final SelenideElement newSpendingButton = $("a[href='/spending']");
     private final SelenideElement uploadImageInput = $("input#image__input");
@@ -31,6 +36,8 @@ public class ProfilePage {
     private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
     private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
 
+    private final Calendar calendar = new Calendar($(".ProfileCalendar"));
+
     private By categoryButton(CategoryButtons button) {
         return By.cssSelector("button[aria-label='%s']".formatted(button.getAriaLabel()));
     }
@@ -44,28 +51,33 @@ public class ProfilePage {
 //                .formatted(categoryName));
 //    }
 
+    @Nonnull
     public ProfilePage activateShowArchivedCheckbox() {
         if(!archiveCheckbox.isSelected())
             archiveCheckbox.click();
         return new ProfilePage();
     }
 
+    @Nonnull
     public ProfilePage deactivateShowArchivedCheckbox() {
         if(archiveCheckbox.isSelected())
             archiveCheckbox.click();
         return new ProfilePage();
     }
 
+    @Nonnull
     public ProfilePage archiveCategoryAndAcceptModal(String categoryName) {
         clickCategoryButtonAndAcceptModal(categoryName, ARCHIVE_CATEGORY, ARCHIVE);
         return new ProfilePage();
     }
 
+    @Nonnull
     public ProfilePage unarchivedCategoryAndAcceptModal(String categoryName) {
         clickCategoryButtonAndAcceptModal(categoryName, UNARCHIVE_CATEGORY, UNARCHIVE);
         return new ProfilePage();
     }
 
+    @Nonnull
     public ProfilePage clickCategoryButtonAndAcceptModal(String categoryName, CategoryButtons categoryButton, ModalButtons modalButton) {
         SelenideElement category = categories.find(exactText(categoryName));
         category.$(categoryButton(categoryButton))
@@ -77,6 +89,7 @@ public class ProfilePage {
         return new ProfilePage();
     }
 
+    @Nonnull
     public ProfilePage checkAlertModal(String expectedMassage) {
         alertModal
                 .shouldBe(visible)
@@ -84,12 +97,14 @@ public class ProfilePage {
         return new ProfilePage();
     }
 
+    @Nonnull
     public ProfilePage checkArchivedCategoryExists(String category) {
         activateShowArchivedCheckbox();
         bubblesArchived.find(text(category)).shouldBe(visible);
         return this;
     }
 
+    @Nonnull
     public ProfilePage checkCategoryExists(String category) {
         bubbles.find(text(category)).shouldBe(visible);
         return this;

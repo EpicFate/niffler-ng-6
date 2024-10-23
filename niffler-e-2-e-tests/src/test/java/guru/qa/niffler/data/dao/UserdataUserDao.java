@@ -1,14 +1,15 @@
-package guru.qa.niffler.data.repository;
+package guru.qa.niffler.data.dao;
 
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @ParametersAreNonnullByDefault
-public interface UserdataUserRepository {
+public interface UserdataUserDao {
 
   @Nonnull
   UserEntity create(UserEntity user);
@@ -22,9 +23,8 @@ public interface UserdataUserRepository {
   @Nonnull
   Optional<UserEntity> findByUsername(String username);
 
-  void addFriendshipRequest(UserEntity requester, UserEntity addressee);
-
-  void addFriend(UserEntity requester, UserEntity addressee);
+  @Nonnull
+  List<UserEntity> findAll();
 
     void remove(UserEntity user);
 }

@@ -10,17 +10,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendDaoSpringJdbc implements SpendDao {
 
-    private static final Config CFG = Config.getInstance();
-    private final String url = CFG.spendJdbcUrl();
+  private static final Config CFG = Config.getInstance();
+  private final String url = CFG.spendJdbcUrl();
 
+    @Nonnull
     @Override
     public SpendEntity create(SpendEntity spend) {
         KeyHolder kh = new GeneratedKeyHolder();
@@ -41,32 +45,35 @@ public class SpendDaoSpringJdbc implements SpendDao {
         return spend;
     }
 
+    @Nonnull
     @Override
     public Optional<SpendEntity> findById(UUID id) {
         try {
-        return Optional.ofNullable(new JdbcTemplate(DataSources.dataSource(url))
-                .queryForObject("""
-                        SELECT * FROM spend
-                        WHERE id = ?
-                        """, SpendEntityRowMapper.instance, id
-                )
-        );
+            return Optional.ofNullable(new JdbcTemplate(DataSources.dataSource(url))
+                    .queryForObject("""
+                            SELECT * FROM spend
+                            WHERE id = ?
+                            """, SpendEntityRowMapper.instance, id
+                    )
+            );
         } catch (
                 EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
 
+    @Nonnull
     @Override
     public List<SpendEntity> findAll() {
         return new JdbcTemplate(DataSources.dataSource(url))
                 .query("SELECT * FROM spend", SpendEntityRowMapper.instance);
     }
 
-    @Override
-    public SpendEntity update(SpendEntity spend) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
-        jdbcTemplate.update("""
+  @Nonnull
+  @Override
+  public SpendEntity update(SpendEntity spend) {
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
+    jdbcTemplate.update("""
               UPDATE "spend"
                 SET spend_date  = ?,
                     currency    = ?,
@@ -74,15 +81,16 @@ public class SpendDaoSpringJdbc implements SpendDao {
                     description = ?
                 WHERE id = ?
             """,
-                new java.sql.Date(spend.getSpendDate().getTime()),
-                spend.getCurrency().name(),
-                spend.getAmount(),
-                spend.getDescription(),
-                spend.getId()
-        );
-        return spend;
-    }
+        new java.sql.Date(spend.getSpendDate().getTime()),
+        spend.getCurrency().name(),
+        spend.getAmount(),
+        spend.getDescription(),
+        spend.getId()
+    );
+    return spend;
+  }
 
+    @Nonnull
     @Override
     public List<SpendEntity> findAllByUsername(String username) {
         return new JdbcTemplate(DataSources.dataSource(url)).query("""

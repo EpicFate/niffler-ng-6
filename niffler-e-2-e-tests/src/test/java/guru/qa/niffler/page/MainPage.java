@@ -8,6 +8,8 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
+
+@ParametersAreNonnullByDefault
 public class MainPage {
     private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
     private final SelenideElement spendingTitle = $x("//h2[text()='History of Spendings']");
@@ -21,18 +23,21 @@ public class MainPage {
     private final SelenideElement statComponent = $("#stat");
     private final SelenideElement spendingTable = $("#spendings");
 
+    @Nonnull
     public FriendsPage friendsPage() {
         header.$("button").click();
         headerMenu.$$("li").find(text("Friends")).click();
         return new FriendsPage();
     }
 
+    @Nonnull
     public PeoplePage allPeoplesPage() {
         header.$("button").click();
         headerMenu.$$("li").find(text("All People")).click();
         return new PeoplePage();
     }
 
+    @Nonnull
     public EditSpendingPage editSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription)).$$("td").get(5).click();
         return new EditSpendingPage();
@@ -42,12 +47,14 @@ public class MainPage {
         tableRows.find(text(spendingDescription)).should(visible);
     }
 
+    @Nonnull
     public MainPage checkThatPageLoaded() {
         statComponent.should(visible).shouldHave(text("Statistics"));
         spendingTable.should(visible).shouldHave(text("History of Spendings"));
         return this;
     }
 
+    @Nonnull
     public ProfilePage openProfile() {
         menuButton.click();
         menu.shouldBe(visible);
@@ -56,6 +63,7 @@ public class MainPage {
         return new ProfilePage();
     }
 
+    @Nonnull
     public MainPage checkSpendingTitleIsVisible() {
         spendingTitle.shouldBe(visible);
         return new MainPage();

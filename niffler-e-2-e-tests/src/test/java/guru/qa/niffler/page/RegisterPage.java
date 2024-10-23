@@ -3,9 +3,12 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Condition.exactText;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
+@ParametersAreNonnullByDefault
 public class RegisterPage {
 
     private final SelenideElement usernameInput = $("#username");
@@ -16,21 +19,25 @@ public class RegisterPage {
     private final SelenideElement proceedLoginButton = $(".form_sign-in");
     private final SelenideElement errorMassage = $("span[class='form__error']");
 
+    @Nonnull
     public RegisterPage setPasswordInput(String password) {
         passwordInput.setValue(password);
         return new RegisterPage();
     }
 
+    @Nonnull
     public RegisterPage setPasswordSubmit(String password) {
         passwordSubmitInput.setValue(password);
         return new RegisterPage();
     }
 
+    @Nonnull
     public RegisterPage setUsernameInput(String username) {
         usernameInput.setValue(username);
         return new RegisterPage();
     }
 
+    @Nonnull
     public RegisterPage clickSubmitButton() {
         submitButton.click();
         return new RegisterPage();
@@ -44,11 +51,13 @@ public class RegisterPage {
         return new RegisterPage();
     }
 
+    @Nonnull
     public RegisterPage checkParagraphSuccessForm() {
         paragraphSuccessForm.shouldHave(exactText("Congratulations! You've registered!"));
         return new RegisterPage();
     }
 
+    @Nonnull
     public RegisterPage checkErrorMassage(String expectedErrorMassage) {
         errorMassage.shouldHave(exactText(expectedErrorMassage));
         return new RegisterPage();
