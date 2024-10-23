@@ -1,8 +1,8 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.dao.UdUserDao;
-import guru.qa.niffler.data.dao.impl.UdUserDaoJdbc;
+import guru.qa.niffler.data.dao.UserdataUserDao;
+import guru.qa.niffler.data.dao.impl.UserdataUserDaoJdbc;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 public class UserDataDbClient {
 
     private static final Config CFG = Config.getInstance();
-    private final UdUserDao udUserDao = new UdUserDaoJdbc();
+    private final UserdataUserDao udUserDao = new UserdataUserDaoJdbc();
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),

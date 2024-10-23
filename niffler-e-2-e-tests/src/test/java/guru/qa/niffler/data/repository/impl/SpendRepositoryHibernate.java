@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.jpa.EntityManagers.em;
-д
+
 @ParametersAreNonnullByDefault
 public class SpendRepositoryHibernate implements SpendRepository {
 

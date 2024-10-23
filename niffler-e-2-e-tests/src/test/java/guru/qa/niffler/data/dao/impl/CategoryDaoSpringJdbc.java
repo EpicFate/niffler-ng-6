@@ -50,7 +50,6 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
 
     @Nonnull
     @Override
-    @Override
     public Optional<CategoryEntity> findById(UUID id) {
         try {
             return Optional.ofNullable(
@@ -67,7 +66,6 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
 
     @Nonnull
     @Override
-    @Override
     public List<CategoryEntity> findAll() {
         return new JdbcTemplate(DataSources.dataSource(url))
                 .query("SELECT * FROM category",
@@ -75,7 +73,6 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
     }
 
     @Nonnull
-    @Override
     @Override
     public CategoryEntity update(CategoryEntity category) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
@@ -94,7 +91,6 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
 
     @Nonnull
     @Override
-    @Override
     public List<CategoryEntity> findAllByUsername(String username) {
         return new JdbcTemplate(DataSources.dataSource(url)).query("""
                 SELECT * FROM category
@@ -112,7 +108,6 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
     }
 
     @Nonnull
-    @Override
     @Override
     public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
         try {

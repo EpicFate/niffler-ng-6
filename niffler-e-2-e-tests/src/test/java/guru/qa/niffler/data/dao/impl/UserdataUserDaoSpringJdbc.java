@@ -121,7 +121,7 @@ public class UserdataUserDaoSpringJdbc implements UserdataUserDao {
                     new JdbcTemplate(DataSources.dataSource(url)).queryForObject("""
                                 SELECT * FROM "user"
                                 WHERE username = ?
-                                """, UserdataUserEntityRowMapper.instance, user)
+                                """, UserdataUserEntityRowMapper.instance, username)
             );
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();

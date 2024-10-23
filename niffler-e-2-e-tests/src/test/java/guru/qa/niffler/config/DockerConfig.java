@@ -8,29 +8,13 @@ enum DockerConfig implements Config {
     @Nonnull
     @Override
     public String frontUrl() {
-        return "";
+        return "http://frontend.niffler.dc";
     }
 
     @Nonnull
-    @Override
-    public String spendJdbcUrl() {
-        return "jdbc:postgresql://127.0.0.1:5432/niffler-spend";
-    }
-
-    @Override
-    public String currencyJdbcUrl() {
-        return "";
-    }
-
     @Override
     public String authUrl() {
-        return "";
-    }
-
-    @Nonnull
-    @Override
-    public String authJdbcUrl() {
-        return "";
+        return "http://auth.niffler.dc:9000";
     }
 
     @Nonnull
@@ -39,39 +23,16 @@ enum DockerConfig implements Config {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-auth";
     }
 
+    @Nonnull
     @Override
     public String gatewayUrl() {
-        return "";
+        return "http://currency.niffler.dc:8091";
     }
 
     @Nonnull
     @Override
     public String userdataUrl() {
-        return "";
-    }
-
-    @Nonnull
-    @Override
-    public String userdataJdbcUrl() {
-        return "";
-    }
-
-    @Nonnull
-    @Override
-    public String spendUrl() {
-        return "";
-    }
-
-    @Nonnull
-    @Override
-    public String spendJdbcUrl() {
-        return "";
-    }
-
-    @Nonnull
-    @Override
-    public String currencyJdbcUrl() {
-        return "";
+        return "http://userdata.niffler.dc:8089";
     }
 
     @Nonnull
@@ -80,8 +41,27 @@ enum DockerConfig implements Config {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-userdata";
     }
 
+    @Nonnull
+    @Override
+    public String spendUrl() {
+        return "http://frontend.niffler.dc:8093/";
+    }
+
+    @Nonnull
+    @Override
+    public String spendJdbcUrl() {
+        return "jdbc:postgresql://127.0.0.1:5432/niffler-spend";
+    }
+
+    @Nonnull
+    @Override
+    public String currencyJdbcUrl() {
+        return "jdbc:postgresql://127.0.0.1:5432/niffler-currency";
+    }
+
+    @Nonnull
     @Override
     public String ghUrl() {
-        return "";
+        return "https://api.github.com/";
     }
 }

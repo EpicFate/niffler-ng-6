@@ -1,6 +1,5 @@
 package guru.qa.niffler.config;
 
-
 import javax.annotation.Nonnull;
 
 enum LocalConfig implements Config {

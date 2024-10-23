@@ -4,7 +4,6 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UserdataUserDao;
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.data.mapper.UserdataUserEntityRowMapper;
 
 import javax.annotation.Nonnull;
@@ -34,7 +33,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
                         INSERT INTO "user" (username, currency, firstname, surname, photo, photo_small, full_name)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         """,
-                Statement.RETURN_GENERATED_KEYS
+                PreparedStatement.RETURN_GENERATED_KEYS
         )) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getCurrency().name());

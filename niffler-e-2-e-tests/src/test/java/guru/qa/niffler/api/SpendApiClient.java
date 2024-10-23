@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -35,8 +36,6 @@ public class SpendApiClient extends RestClient {
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
-    private final SpendApi spendApi = retrofit.create(SpendApi.class);
-
     @Nonnull
     public SpendJson createSpend(SpendJson spend) {
         return executeSpend(spendApi -> spendApi.addSpend(spend));
@@ -55,11 +54,11 @@ public class SpendApiClient extends RestClient {
     @Nonnull
     public List<SpendJson> allSpends(String username,
                                      @Nullable CurrencyValues currency,
-                                     @Nullable String from,
-                                     @Nullable String to) {
+                                     @Nullable Date from,
+                                     @Nullable Date to) {
         final Response<List<SpendJson>> response;
         try {
-            response = spendApi.allSpends(username, currency, from, to)
+            response = spendApi.getSpends(username, currency, from, to)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -95,10 +94,10 @@ public class SpendApiClient extends RestClient {
     }
 
     @Nonnull
-    public List<CategoryJson> allCategory(String username) {
+    public List<CategoryJson> allCategory(String username, boolean excludeArchived) {
         final Response<List<CategoryJson>> response;
         try {
-            response = spendApi.allCategories(username)
+            response = spendApi.getCategories(username, excludeArchived)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);

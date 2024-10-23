@@ -9,6 +9,9 @@ import org.openqa.selenium.By;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.page.component.Calendar;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static guru.qa.niffler.common.CategoryButtons.ARCHIVE_CATEGORY;
@@ -95,6 +98,12 @@ public class ProfilePage extends BasePage<ProfilePage> {
                 .shouldBe(visible)
                 .shouldHave(exactText(expectedMassage));
         return new ProfilePage();
+    }
+
+    @Nonnull
+    public ProfilePage checkName(String name) {
+        nameInput.shouldHave(value(name));
+        return this;
     }
 
     @Nonnull
