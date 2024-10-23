@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
+public class SpendingExtension implements BeforeEachCallback, ParameterResolver { //, AfterEachCallback
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendingExtension.class);
 
@@ -36,11 +36,16 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                 .get(context.getUniqueId(), UserJson.class);
 
             for (Spending spendAnno : userAnno.spendings()) {
+//              CategoryJson alreadyExistingCategory = spendClient
+//                      .findCategoryByUsernameAndCategoryName(userAnno.username(), spendAnno.category());
+//              UUID categoryId = alreadyExistingCategory.id() != null ?
+//                      alreadyExistingCategory.id() : null;
+
               SpendJson spend = new SpendJson(
                   null,
                   new Date(),
                   new CategoryJson(
-                      null,
+                          null, //categoryId,
                       spendAnno.category(),
                       user != null ? user.username() : userAnno.username(),
                       false
@@ -76,6 +81,19 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
   @Override
   @SuppressWarnings("unchecked")
   public SpendJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return (SpendJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class).toArray();
+    return (SpendJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class)
+            .stream()
+            .toArray(SpendJson[]::new);
   }
+
+//  @Override
+//  public void afterEach(ExtensionContext context) throws Exception {
+//    List<SpendJson> list = context.getStore(NAMESPACE).get(context.getUniqueId(), List.class);
+//    list.forEach(spend ->
+//      spendClient.removeSpend(spend)
+//    );
+//    list.forEach(spend ->
+//      spendClient.removeCategory(spend.category())
+//    );
+//  }
 }

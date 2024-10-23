@@ -43,4 +43,20 @@ public class SpendDbClient implements SpendClient {
             return null;
         });
     }
+
+//    public void removeSpend(SpendJson spendJson) {
+//        xaTransactionTemplate.execute(() -> {
+//            spendRepository.remove(SpendEntity.fromJson(spendJson));
+//            return null;
+//        });
+//    }
+//
+//    public CategoryJson findCategoryByUsernameAndCategoryName(String username, String name) {
+//        return xaTransactionTemplate.execute(() ->
+//                CategoryJson.fromEntity(
+//                        spendRepository.findCategoryByUsernameAndCategoryName(username, name)
+//                                .orElse(new CategoryEntity())
+//                )
+//        );
+//    }
 }

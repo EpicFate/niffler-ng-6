@@ -7,11 +7,7 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
 import guru.qa.niffler.service.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
@@ -22,6 +18,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 public class CategoryExtension implements
     BeforeEachCallback,
     ParameterResolver {
+//    AfterEachCallback
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
@@ -74,6 +71,16 @@ public class CategoryExtension implements
   @SuppressWarnings("unchecked")
   public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
     return (CategoryJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class)
-        .toArray();
+            .stream()
+            .toArray(CategoryJson[]::new);
   }
+
+//  @Override
+//  public void afterEach(ExtensionContext context) throws Exception {
+//    context.getStore(NAMESPACE).get(context.getUniqueId(), List.class)
+//            .forEach(category ->
+//                    spendClient.removeCategory((CategoryJson) category)
+//            );
+//
+//  }
 }
