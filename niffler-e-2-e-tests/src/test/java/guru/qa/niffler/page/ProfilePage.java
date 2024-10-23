@@ -1,87 +1,97 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.common.CategoryButtons;
-import guru.qa.niffler.common.ModalButtons;
-import org.openqa.selenium.By;
+import guru.qa.niffler.config.Config;
+import guru.qa.niffler.page.component.Calendar;
 
-import static com.codeborne.selenide.Condition.exactText;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.codeborne.selenide.Condition.attributeMatching;
+import static com.codeborne.selenide.Condition.disabled;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.*;
-import static guru.qa.niffler.common.CategoryButtons.ARCHIVE_CATEGORY;
-import static guru.qa.niffler.common.CategoryButtons.UNARCHIVE_CATEGORY;
-import static guru.qa.niffler.common.ModalButtons.ARCHIVE;
-import static guru.qa.niffler.common.ModalButtons.UNARCHIVE;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
-public class ProfilePage {
+@ParametersAreNonnullByDefault
+public class ProfilePage extends BasePage<ProfilePage> {
 
-    private final SelenideElement newSpendingButton = $("a[href='/spending']");
-    private final SelenideElement uploadImageInput = $("input#image__input");
-    private final SelenideElement usernameInput = $("#username");
+    public static String url = Config.getInstance().frontUrl() + "profile";
+
+    private final SelenideElement avatar = $("#image__input").parent().$("img");
+    private final SelenideElement userName = $("#username");
     private final SelenideElement nameInput = $("#name");
-    private final SelenideElement saveChangesButton = $("button[type='submit']");
-    private final SelenideElement archiveCheckbox = $x(
-            "//*[text()='Show archived']//preceding::input[@type='checkbox']");
-    private final SelenideElement addNewCategoryInput = $("#category");
-    private final ElementsCollection categories = $$x(
-            "//*[@aria-label]//ancestor::div[contains(@class, 'MuiGrid-root MuiGrid-item')]");
-    private final SelenideElement dialogModal = $("[role=dialog]");
-    private final SelenideElement alertModal = $("[role='alert']");
+    private final SelenideElement photoInput = $("input[type='file']");
+    private final SelenideElement submitButton = $("button[type='submit']");
+    private final SelenideElement categoryInput = $("input[name='category']");
+    private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
+    private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
+    private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
 
-    private By categoryButton(CategoryButtons button) {
-        return By.cssSelector("button[aria-label='%s']".formatted(button.getAriaLabel()));
+    private final Calendar calendar = new Calendar($(".ProfileCalendar"));
+
+    @Nonnull
+    public ProfilePage setName(String name) {
+        nameInput.clear();
+        nameInput.setValue(name);
+        return this;
     }
 
-    private By modalButton(ModalButtons button) {
-        return By.xpath(".//button[text()='%s']".formatted(button.getButtonName()));
+    @Nonnull
+    public ProfilePage uploadPhotoFromClasspath(String path) {
+        photoInput.uploadFromClasspath(path);
+        return this;
     }
 
-//    private SelenideElement categoryByName(String categoryName) {
-//        return $x("//*[text()='%s']//ancestor::div[contains(@class, 'MuiGrid-root MuiGrid-item')]"
-//                .formatted(categoryName));
-//    }
-
-    public ProfilePage activateShowArchivedCheckbox() {
-        if(!archiveCheckbox.isSelected())
-            archiveCheckbox.click();
-        return new ProfilePage();
+    @Nonnull
+    public ProfilePage addCategory(String category) {
+        categoryInput.setValue(category).pressEnter();
+        return this;
     }
 
-    public ProfilePage deactivateShowArchivedCheckbox() {
-        if(archiveCheckbox.isSelected())
-            archiveCheckbox.click();
-        return new ProfilePage();
+    @Nonnull
+    public ProfilePage checkCategoryExists(String category) {
+        bubbles.find(text(category)).shouldBe(visible);
+        return this;
     }
 
-    public ProfilePage archiveCategoryAndAcceptModal(String categoryName) {
-        clickCategoryButtonAndAcceptModal(categoryName, ARCHIVE_CATEGORY, ARCHIVE);
-        return new ProfilePage();
+    @Nonnull
+    public ProfilePage checkArchivedCategoryExists(String category) {
+        archivedSwitcher.click();
+        bubblesArchived.find(text(category)).shouldBe(visible);
+        return this;
     }
 
-    public ProfilePage unarchivedCategoryAndAcceptModal(String categoryName) {
-        clickCategoryButtonAndAcceptModal(categoryName, UNARCHIVE_CATEGORY, UNARCHIVE);
-        return new ProfilePage();
+    @Nonnull
+    public ProfilePage checkUsername(String username) {
+        this.userName.should(value(username));
+        return this;
     }
 
-    public ProfilePage clickCategoryButtonAndAcceptModal(String categoryName, CategoryButtons categoryButton, ModalButtons modalButton) {
-        SelenideElement category = categories.find(exactText(categoryName));
-        category.$(categoryButton(categoryButton))
-                .click();
-        dialogModal.shouldBe(visible)
-                .$(modalButton(modalButton))
-                .click();
-        dialogModal.shouldNotBe(visible);
-        return new ProfilePage();
+    @Nonnull
+    public ProfilePage checkName(String name) {
+        nameInput.shouldHave(value(name));
+        return this;
     }
 
-    public ProfilePage checkAlertModal(String expectedMassage) {
-        alertModal
-                .shouldBe(visible)
-                .shouldHave(exactText(expectedMassage));
-        return new ProfilePage();
+    @Nonnull
+    public ProfilePage checkPhotoExist() {
+        avatar.should(attributeMatching("src", "data:image.*"));
+        return this;
     }
 
+    @Nonnull
+    public ProfilePage checkThatCategoryInputDisabled() {
+        categoryInput.should(disabled);
+        return this;
+    }
 
+    @Nonnull
+    public ProfilePage submitProfile() {
+        submitButton.click();
+        return this;
+    }
 }

@@ -2,54 +2,44 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Condition.exactText;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
+@ParametersAreNonnullByDefault
 public class RegisterPage {
 
-    private final SelenideElement usernameInput = $("#username");
-    private final SelenideElement passwordInput = $("#password");
-    private final SelenideElement passwordSubmit = $("#passwordSubmit");
+    private final SelenideElement usernameInput = $("input[name='username']");
+    private final SelenideElement passwordInput = $("input[name='password']");
+    private final SelenideElement passwordSubmitInput = $("input[name='passwordSubmit']");
     private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement paragraphSuccessForm = $(".form__paragraph_success");
-    private final SelenideElement signInButton = $("a.form_sign-in");
-    private final SelenideElement errorMassage = $("span[class='form__error']");
+    private final SelenideElement proceedLoginButton = $(".form_sign-in");
+    private final SelenideElement errorContainer = $(".form__error");
 
-    public RegisterPage setPasswordInput(String password) {
+    @Nonnull
+    public RegisterPage fillRegisterPage(String login, String password, String passwordSubmit) {
+        usernameInput.setValue(login);
         passwordInput.setValue(password);
-        return new RegisterPage();
+        passwordSubmitInput.setValue(passwordSubmit);
+        return this;
     }
 
-    public RegisterPage setPasswordSubmit(String password) {
-        passwordSubmit.setValue(password);
-        return new RegisterPage();
+    @Nonnull
+    public LoginPage successSubmit() {
+        submit();
+        proceedLoginButton.click();
+        return new LoginPage();
     }
 
-    public RegisterPage setUsernameInput(String username) {
-        usernameInput.setValue(username);
-        return new RegisterPage();
-    }
-
-    public RegisterPage clickSubmitButton() {
+    public void submit() {
         submitButton.click();
-        return new RegisterPage();
     }
 
-    public RegisterPage createNewUser(String username, String password) {
-        setUsernameInput(username);
-        setPasswordInput(password);
-        setPasswordSubmit(password);
-        clickSubmitButton();
-        return new RegisterPage();
-    }
-
-    public RegisterPage checkParagraphSuccessForm() {
-        paragraphSuccessForm.shouldHave(exactText("Congratulations! You've registered!"));
-        return new RegisterPage();
-    }
-
-    public RegisterPage checkErrorMassage(String expectedErrorMassage) {
-        errorMassage.shouldHave(exactText(expectedErrorMassage));
-        return new RegisterPage();
+    @Nonnull
+    public RegisterPage checkAlertMessage(String errorMessage) {
+        errorContainer.shouldHave(text(errorMessage));
+        return this;
     }
 }
