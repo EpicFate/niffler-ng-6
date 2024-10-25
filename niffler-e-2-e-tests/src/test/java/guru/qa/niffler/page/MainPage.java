@@ -3,6 +3,8 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SpendingTable;
+import guru.qa.niffler.page.component.StatComponent;
 import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
@@ -29,14 +31,14 @@ public class MainPage extends BasePage<MainPage> {
 
     @Nonnull
     public FriendsPage friendsPage() {
-        header.$("button").click();
+        header.getSelf().$("button").click();
         headerMenu.$$("li").find(text("Friends")).click();
         return new FriendsPage();
     }
 
     @Nonnull
     public PeoplePage allPeoplesPage() {
-        header.$("button").click();
+        header.getSelf().$("button").click();
         headerMenu.$$("li").find(text("All People")).click();
         return new PeoplePage();
     }
@@ -49,13 +51,6 @@ public class MainPage extends BasePage<MainPage> {
 
     public void checkThatTableContainsSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription)).should(visible);
-    }
-
-    @Nonnull
-    public MainPage checkThatPageLoaded() {
-        statComponent.should(visible).shouldHave(text("Statistics"));
-        spendingTable.should(visible).shouldHave(text("History of Spendings"));
-        return this;
     }
 
     @Nonnull
