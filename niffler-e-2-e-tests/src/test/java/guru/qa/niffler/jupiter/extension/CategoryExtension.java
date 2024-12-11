@@ -29,6 +29,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
   public void beforeEach(ExtensionContext context) throws Exception {
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
+
           if (ArrayUtils.isNotEmpty(userAnno.categories())) {
             List<CategoryJson> result = new ArrayList<>();
 
