@@ -8,13 +8,12 @@ import guru.qa.niffler.page.component.StatComponent;
 import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
-@ParametersAreNonnullByDefault
+
 public class MainPage extends BasePage<MainPage> {
 
     public static final String URL = CFG.frontUrl() + "main";
@@ -23,11 +22,16 @@ public class MainPage extends BasePage<MainPage> {
     protected final SpendingTable spendingTable = new SpendingTable();
     protected final StatComponent statComponent = new StatComponent();
 
-//    private final SelenideElement header = $("#root header");
+    //    private final SelenideElement header = $("#root header");
     private final SelenideElement headerMenu = $("ul[role='menu']");
     private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
 //    private final SelenideElement statComponent = $("#stat");
 //    private final SelenideElement spendingTable = $("#spendings");
+
+    @Nonnull
+    public Header getHeader() {
+        return header;
+    }
 
     @Nonnull
     public FriendsPage friendsPage() {
@@ -54,11 +58,6 @@ public class MainPage extends BasePage<MainPage> {
     }
 
     @Nonnull
-    public Header getHeader() {
-        return header;
-    }
-
-    @Nonnull
     public SpendingTable getSpendingTable() {
         spendingTable.getSelf().scrollIntoView(true);
         return spendingTable;
@@ -72,5 +71,11 @@ public class MainPage extends BasePage<MainPage> {
         statComponent.getSelf().should(visible).shouldHave(text("Statistics"));
         spendingTable.getSelf().should(visible).shouldHave(text("History of Spendings"));
         return this;
+    }
+
+    @Nonnull
+    public StatComponent getStatComponent() {
+        statComponent.getSelf().scrollIntoView(true);
+        return statComponent;
     }
 }
