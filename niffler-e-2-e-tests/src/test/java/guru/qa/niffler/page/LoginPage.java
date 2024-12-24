@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class LoginPage extends BasePage<LoginPage> {
 
-    public static final String URL = CFG.authUrl() + "login";
+    public static final String URL = CFG.authUrl() + "/login";
 
     private final SelenideElement usernameInput = $("input[name='username']");
     private final SelenideElement passwordInput = $("input[name='password']");

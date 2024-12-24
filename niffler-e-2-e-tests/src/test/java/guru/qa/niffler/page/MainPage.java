@@ -31,21 +31,26 @@ public class MainPage extends BasePage<MainPage> {
     private final SelenideElement profileButton = $("a[href='/profile']");
     private final SelenideElement profile = $x("//h2[text()='Profile']");
 
-    private final SelenideElement header = $("#root header");
+//    private final SelenideElement header = $("#root header");
     private final SelenideElement headerMenu = $("ul[role='menu']");
-    private final SelenideElement statComponent = $("#stat");
-    private final SelenideElement spendingTable = $("#spendings");
+//    private final SelenideElement statComponent = $("#stat");
+//    private final SelenideElement spendingTable = $("#spendings");
+
+    @Nonnull
+    public Header getHeader() {
+        return header;
+    }
 
     @Nonnull
     public FriendsPage friendsPage() {
-        header.$("button").click();
+        header.getSelf().$("button").click();
         headerMenu.$$("li").find(text("Friends")).click();
         return new FriendsPage();
     }
 
     @Nonnull
     public PeoplePage allPeoplesPage() {
-        header.$("button").click();
+        header.getSelf().$("button").click();
         headerMenu.$$("li").find(text("All People")).click();
         return new PeoplePage();
     }

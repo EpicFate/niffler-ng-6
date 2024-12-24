@@ -34,10 +34,10 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
     private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
     private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
-    private final SelenideElement archiveCheckbox = $x(
-            "//*[text()='Show archived']//preceding::input[@type='checkbox']");
-    private final ElementsCollection categories = $$x(
-            "//*[@aria-label]//ancestor::div[contains(@class, 'MuiGrid-root MuiGrid-item')]");
+//    private final SelenideElement archiveCheckbox = $x(
+//            "//*[text()='Show archived']//preceding::input[@type='checkbox']");
+//    private final ElementsCollection categories = $$x(
+//            "//*[@aria-label]//ancestor::div[contains(@class, 'MuiGrid-root MuiGrid-item')]");
 
     @Step("Set name: {0}")
     @Nonnull
