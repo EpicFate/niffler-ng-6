@@ -2,6 +2,10 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SpendingTable;
+import guru.qa.niffler.page.component.StatComponent;
+import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -12,7 +16,14 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 @ParametersAreNonnullByDefault
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
+
+    public static final String URL = CFG.frontUrl() + "main";
+
+    protected final Header header = new Header();
+    protected final SpendingTable spendingTable = new SpendingTable();
+    protected final StatComponent statComponent = new StatComponent();
+
     private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
     private final SelenideElement spendingTitle = $x("//h2[text()='History of Spendings']");
     private final SelenideElement menuButton = $("svg[data-testid='PersonIcon']");
@@ -49,10 +60,13 @@ public class MainPage {
         tableRows.find(text(spendingDescription)).should(visible);
     }
 
+    @Step("Check that page is loaded")
+    @Override
     @Nonnull
     public MainPage checkThatPageLoaded() {
-        statComponent.should(visible).shouldHave(text("Statistics"));
-        spendingTable.should(visible).shouldHave(text("History of Spendings"));
+        header.getSelf().should(visible).shouldHave(text("Niffler"));
+        statComponent.getSelf().should(visible).shouldHave(text("Statistics"));
+        spendingTable.getSelf().should(visible).shouldHave(text("History of Spendings"));
         return this;
     }
 
@@ -69,5 +83,17 @@ public class MainPage {
     public MainPage checkSpendingTitleIsVisible() {
         spendingTitle.shouldBe(visible);
         return new MainPage();
+    }
+
+    @Nonnull
+    public SpendingTable getSpendingTable() {
+        spendingTable.getSelf().scrollIntoView(true);
+        return spendingTable;
+    }
+
+    @Nonnull
+    public StatComponent getStatComponent() {
+        statComponent.getSelf().scrollIntoView(true);
+        return statComponent;
     }
 }

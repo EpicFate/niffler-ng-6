@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.*;
 
+@Deprecated
 public class UsersQueueExtension implements
         BeforeTestExecutionCallback,
         AfterTestExecutionCallback,
@@ -112,7 +113,6 @@ public class UsersQueueExtension implements
         };
     }
 
-
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.getParameter().getType().isAssignableFrom(StaticUser.class)
@@ -121,18 +121,9 @@ public class UsersQueueExtension implements
 
     @Override
     public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        @SuppressWarnings("unchecked")
-        Map<UserType, StaticUser> userMap = (Map<UserType, StaticUser>) extensionContext.getStore(NAMESPACE)
-                .get(extensionContext.getUniqueId(), Map.class);
-
-        UserType ut = parameterContext.findAnnotation(UserType.class).orElseThrow(
-                () -> new ParameterResolutionException("Аннотация @UserType не найдена")
-        );
-
-        StaticUser staticUser = userMap.get(ut);
-        if (staticUser == null) {
-            throw new ParameterResolutionException("Пользователь не найден для указанного типа UserType");
-        }
-        return staticUser;
+        return (StaticUser) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class)
+                .get(
+                        AnnotationSupport.findAnnotation(parameterContext.getParameter(), UserType.class).get()
+                );
     }
 }
